@@ -7,6 +7,7 @@ public class Point {
 	private int currentState;
 	private int nextState;
 	private int numStates = 6;
+	private int size;
 	
 	public Point() {
 		currentState = 0;

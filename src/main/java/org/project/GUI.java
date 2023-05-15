@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+
 /**
  * Class containing GUI: board + buttons
  */
@@ -70,6 +71,9 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 		container.add(board, BorderLayout.CENTER);
 		container.add(buttonPanel, BorderLayout.SOUTH);
 	}
+
+
+
 
 	/**
 	 * handles clicking on each button
