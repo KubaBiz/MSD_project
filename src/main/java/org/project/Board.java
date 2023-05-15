@@ -137,10 +137,13 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				blocked[x][y] = false;
 			}
 
-
-		readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\droga2.txt", moveDownList);
-		readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\droga1.txt", moveUpList);
-
+		String localization = System.getProperty("user.dir");
+		String str1 = "\\src\\main\\java\\org\\project\\droga2.txt";
+		String str2 = "\\src\\main\\java\\org\\project\\droga1.txt";
+		String street1 = localization + str1;
+		String street2 = localization + str2;
+		readFile(street1, moveDownList);
+		readFile(street2, moveUpList);
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -158,7 +161,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				prev = new Vector2d(x,y);
 			}
 		} catch (IOException e) {
-
+			System.err.println("Błąd odczytu pliku: " + e.getMessage());
 		}
 	}
 	//paint background and separators between cells
@@ -209,7 +212,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				}
 			}
 		}
-
 	}
 
 	public void mouseClicked(MouseEvent e) {
