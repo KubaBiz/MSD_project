@@ -1,6 +1,6 @@
 package org.project;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class Program extends JFrame {
 
@@ -14,12 +14,11 @@ public class Program extends JFrame {
 		gof = new GUI(this);
 		gof.initialize(this.getContentPane());
 
-		this.setSize(800, 600);
+		this.setSize(1024, 768);
 		this.setVisible(true);
 	}
 
 	public static void main(String[] args) {
 		new Program();
 	}
-
 }

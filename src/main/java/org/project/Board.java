@@ -1,30 +1,19 @@
 package org.project;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Insets;
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import javax.swing.JComponent;
-import javax.swing.event.MouseInputListener;
-
 import static java.lang.Math.random;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-/**
- * Board with Points that may be expanded (with automatic change of cell
- * number) with mouse event listener
- */
 
 public class Board extends JComponent implements MouseInputListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
@@ -35,18 +24,21 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	Generator generator2;
 	private List<Vector2d> moveDownList = new ArrayList<>();
 	private List<Vector2d> moveUpList = new ArrayList<>();
-	private int length;
-	private int height;
-	private int size = 14;
+	//private int length;
+	//private int height;
+	//private Point[][] points;
+	private int size = 20;
 	Vector2d start;
+	public int editType = 0;
+
+
 	public Board(int length, int height) {
+		initialize(length, height);
 		addMouseListener(this);
 		addComponentListener(this);
 		addMouseMotionListener(this);
 		setBackground(Color.WHITE);
 		setOpaque(true);
-		this.length = length;
-		this.height = height;
 	}
 
 	public void swapVehicles(int x, int y, Vector2d vector){
@@ -59,7 +51,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		blocked[x][y] = false;
 	}
 
-	public void move(int x, int y){
+	public void moveCarTemp(int x, int y){
 		Vector2d vector;
 
 		if(directions[x][y].size() > 0){
@@ -71,7 +63,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 
-	// single iteration
+	//single iteration
 	public void iteration() {
 		for (int x = 0; x < points.length; ++x) {
 			for ( int y = 0; y < points[x].length; ++y){
@@ -84,7 +76,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		for (int i = start - 1; i >= 0 ; --i) {
 			int x = moveDownList.get(i).getX();
 			int y = moveDownList.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) move(x,y);
+			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
 		}
 
 		// ruch na góre
@@ -92,7 +84,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		for (int i = start - 1; i >= 0 ; --i) {
 			int x = moveUpList.get(i).getX();
 			int y = moveUpList.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) move(x,y);
+			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
 		}
 
 
@@ -106,8 +98,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			points[generator2.getPosition().getX()][generator2.getPosition().getY()] = vehicle;
 			blocked[generator2.getPosition().getX()][generator2.getPosition().getY()] = true;
 		}
-
-
 
 		this.repaint();
 	}
@@ -133,7 +123,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			for (int y = 0; y < points[x].length; ++y){
 				points[x][y] = new Vehicles(0,0,0,0,
 						new Vector2d(-1,-1),new Vector2d(0,0));
-				directions[x][y] = new ArrayList<Vector2d>();
+				directions[x][y] = new ArrayList<>();
 				blocked[x][y] = false;
 			}
 
@@ -164,6 +154,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			System.err.println("Błąd odczytu pliku: " + e.getMessage());
 		}
 	}
+
 	//paint background and separators between cells
 	protected void paintComponent(Graphics g) {
 		if (isOpaque()) {
@@ -198,29 +189,26 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			for (y = 0; y < points[x].length; ++y) {
 				if (points[x][y].getLength() != 0) {
 					switch (points[x][y].getLength()) {
-						case 1:
-							g.setColor(new Color(0xFFEA00));
-							break;
-						case 2:
-							g.setColor(new Color(0x00ff00));
-							break;
-						case 3:
-							g.setColor(new Color(0xff0000));
-							break;
+						case 1 -> g.setColor(new Color(0xFFEA00));
+						case 2 -> g.setColor(new Color(0x00ff00));
+						case 3 -> g.setColor(new Color(0xff0000));
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
 			}
 		}
+
 	}
 
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / size;
 		int y = e.getY() / size;
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
-//			points[x][y].clicked();
+			if(editType==0) {
+				//points[x][y].clicked();
 
-			this.repaint();
+				this.repaint();
+			}
 		}
 	}
 
@@ -234,9 +222,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		int x = e.getX() / size;
 		int y = e.getY() / size;
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
-//			points[x][y].setState(1);
+			if(editType==0){
+				//points[x][y].clicked();
+			}
 			this.repaint();
-
 		}
 	}
 

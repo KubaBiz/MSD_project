@@ -1,6 +1,6 @@
 package org.project;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
 
 
 

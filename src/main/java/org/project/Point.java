@@ -1,54 +1,63 @@
 package org.project;
 
-import java.util.ArrayList;
+import static java.lang.Math.random;
 
 public class Point {
-	private ArrayList<Point> neighbors;
-	private int currentState;
-	private int nextState;
-	private int numStates = 6;
-	private int size;
-	
+	public final int maxSpeed = 5;
+	//public Point nNeighbor;
+	//public Point wNeighbor;
+	//public Point eNeighbor;
+	//public Point sNeighbor;
+	//public float nVel;
+	//public float eVel;
+	//public float wVel;
+	//public float sVel;
+	public int type;
+	public int velocity;
+	public boolean moved;
+
 	public Point() {
-		currentState = 0;
-		nextState = 0;
-		neighbors = new ArrayList<Point>();
+		clear();
 	}
 
 	public void clicked() {
-		currentState=(++currentState)%numStates;	
+		type = 1;
 	}
 	
-	public int getState() {
-		return currentState;
+	public void clear() {
+		type = 0;
+		velocity = 0;
 	}
 
-	public void setState(int s) {
-		currentState = s;
+	public void accelerate() {
+		if(type == 1 && velocity<maxSpeed) {
+			velocity+=1;
+		}
 	}
 
-	public void calculateNewState() {
-		//TODO: insert logic which updates according to currentState and 
-		//number of active neighbors
+	public void slowingDown(int distance) {
+		if(type == 1) {
+			velocity=distance;
+		}
 	}
 
-	public void changeState() {
-		currentState = nextState;
-	}
-	
-	public void addNeighbor(Point nei) {
-		neighbors.add(nei);
-	}
-	
-	//TODO: write method counting all active neighbors of THIS point
-
-	public int countNeighbors(){
-		int n = 0;
-		for (Point neighbor : neighbors) {
-			if (neighbor.currentState == 1) {
-				n += 1;
+	public void randomization(){
+		if(type == 1){
+			int random = (int)(random() * 2);
+			if(velocity > 0 && random == 1){
+				velocity-=1;
 			}
 		}
-		return n;
 	}
+
+	public void move(int vel){
+		type = 1;
+		velocity = vel;
+		moved = true;
+	}
+	public int getType() {
+		return type;
+	}
+
+	public int getVelocity(){return velocity;}
 }
