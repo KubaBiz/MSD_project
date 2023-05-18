@@ -7,9 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +25,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	//private int length;
 	//private int height;
 	//private Point[][] points;
-	private int size = 20;
+	private int size = 12;
 	Vector2d start;
 
 	public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
@@ -132,10 +130,19 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		String localization = System.getProperty("user.dir");
 		String str1 = "\\src\\main\\java\\org\\project\\droga2.txt";
 		String str2 = "\\src\\main\\java\\org\\project\\droga1.txt";
+		String borderPath = "\\src\\main\\java\\org\\project\\borders.txt";
+		String buildingsPath = "\\src\\main\\java\\org\\project\\buildings.txt";
+
+		String border = localization + borderPath;
+		String buildings = localization + buildingsPath;
 		String street1 = localization + str1;
 		String street2 = localization + str2;
+
 		readFile(street1, moveDownList);
 		readFile(street2, moveUpList);
+
+		drawFromFile(border, 9);
+		drawFromFile(buildings, 8);
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -151,6 +158,20 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 					list.add(prev);
 				}
 				prev = new Vector2d(x,y);
+			}
+		} catch (IOException e) {
+			System.err.println("Błąd odczytu pliku: " + e.getMessage());
+		}
+	}
+
+	public void drawFromFile(String fileName, int typetoSet){
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] numbers = line.split(" ");
+				int x = Integer.parseInt(numbers[0]);
+				int y = Integer.parseInt(numbers[1]);
+				points[x][y].setLength(typetoSet);
 			}
 		} catch (IOException e) {
 			System.err.println("Błąd odczytu pliku: " + e.getMessage());
@@ -194,6 +215,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 						case 1 -> g.setColor(new Color(0xFFEA00));
 						case 2 -> g.setColor(new Color(0x00ff00));
 						case 3 -> g.setColor(new Color(0xff0000));
+						case 5 -> g.setColor(new Color(0xff00ff));
+						case 8 -> g.setColor(new Color(0x6F7DA1));
+						case 9 -> g.setColor(new Color(0x000000));
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
@@ -201,14 +225,32 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 
 	}
-
+    // 34 x 76
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / size;
 		int y = e.getY() / size;
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
-			if(editType==0) {
-				//points[x][y].clicked();
-				points[x][y].setLength(1);
+			if(editType<4) {
+				points[x][y].setLength(editType);
+				this.repaint();
+			}
+			if(editType == 5 && points[x][y].getLength() != editType){
+				String localization = System.getProperty("user.dir");
+				String str1 = "\\src\\main\\java\\org\\project\\buildings.txt";
+				String fileName = localization + str1;
+				try {
+					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+
+					writer.write(Integer.toString(x) + " " + Integer.toString(y));
+					writer.newLine();
+
+					writer.close();
+
+					System.out.println("Numbers have been added to the file.");
+				} catch (IOException exception) {
+					System.out.println("An error occurred: " + exception.getMessage());
+				}
+				points[x][y].setLength(editType);
 				this.repaint();
 			}
 		}
@@ -224,8 +266,24 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		int x = e.getX() / size;
 		int y = e.getY() / size;
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
-			if(editType==0){
-				//points[x][y].clicked();
+			if(editType == 5 && points[x][y].getLength() != editType){
+				String localization = System.getProperty("user.dir");
+				String str1 = "\\src\\main\\java\\org\\project\\buildings.txt";
+				String fileName = localization + str1;
+				try {
+					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+
+					writer.write(Integer.toString(x) + " " + Integer.toString(y));
+					writer.newLine();
+
+					writer.close();
+
+					System.out.println("Numbers have been added to the file.");
+				} catch (IOException exception) {
+					System.out.println("An error occurred: " + exception.getMessage());
+				}
+				points[x][y].setLength(editType);
+				this.repaint();
 			}
 			this.repaint();
 		}
