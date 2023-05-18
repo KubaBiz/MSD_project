@@ -29,6 +29,8 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	//private Point[][] points;
 	private int size = 20;
 	Vector2d start;
+
+	public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
 	public int editType = 0;
 
 
@@ -206,7 +208,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
 			if(editType==0) {
 				//points[x][y].clicked();
-
+				points[x][y].setLength(1);
 				this.repaint();
 			}
 		}
