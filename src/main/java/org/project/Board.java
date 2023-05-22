@@ -47,7 +47,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		setOpaque(true);
 	}
 
-	public void swapVehicles(int x, int y, Vector2d vector){
+	public void moveVehicles(int x, int y, Vector2d vector){
 		points[vector.getX()][vector.getY()] = points[x][y];
 		points[x][y].setPosition(vector);
 		blocked[vector.getX()][vector.getY()] = true;
@@ -64,7 +64,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			vector = directions[x][y].get(0);
 			if(directions[vector.getX()][vector.getY()].size() > 0){
 				vector = directions[vector.getX()][vector.getY()].get(0);
-				swapVehicles(x,y,vector);
+				moveVehicles(x,y,vector);
 			}
 		}
 	}

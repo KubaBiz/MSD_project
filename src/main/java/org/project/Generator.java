@@ -19,14 +19,14 @@ public class Generator {
 
     public Vehicles generateVehicle(){
 
-        Vehicles bike = new Vehicles(1,2,1,1, position, tailVector);
-        Vehicles car = new Vehicles(2,4,2,2,position,tailVector);
-        Vehicles bigCar = new Vehicles(3,4,2,2,position, tailVector);
+        Vehicles bike = new Vehicles(1,1,1,1, position, tailVector);
+        Vehicles car = new Vehicles(2,3,2,2,position,tailVector);
+        Vehicles bigCar = new Vehicles(3,2,1,2,position, tailVector);
 
         Random r = new Random();
-        int draw = r.nextInt(0,12);
-        if(draw < 4) return bike;
-        else if (draw < 10) return  car;
+        int draw = r.nextInt(0,100);
+        if(draw < 7) return bike;
+        else if (draw < 75) return  car;
         else return bigCar;
     }
 }
