@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TestBoard extends JComponent implements MouseInputListener, ComponentListener {
 
@@ -18,6 +19,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     private List<Vector2d>[][] directions;
     private List<Vector2d> moveRight = new ArrayList<>();
     private List<Vector2d> moveLeft = new ArrayList<>();
+    private List<Vector2d> moveDown = new ArrayList<>();
     private Boolean[][] blocked;
     Generator generator1;
     Generator generator2;
@@ -43,7 +45,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     }
 
     public void addVehicle(Generator generator, int frequency){
-        if(!blocked[generator.getPosition().getX()][generator.getPosition().getY()] && time % frequency == 0){
+        if( time % frequency == 0){
             Vehicles vehicle = generator.generateVehicle();
             points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
             blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
@@ -52,9 +54,12 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     public void iteration() {
         for (int x = 0; x < points.length; ++x) {
             for ( int y = 0; y < points[x].length; ++y){
-                if(blocked[x][y]) points[x][y].moved = false;
                 if(points[x][y].getLength() > 0 ){
+                    points[x][y].moved = false;
                     int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
+//                    if(x == 50 && (y == 27 || y == 29 || y == 30) && carInFront(60,30,20) < 19) {
+//                        obstacle = 1;
+//                    }
                     points[x][y].speedBoost();
                     points[x][y].speedReduction(obstacle);
                 }
@@ -71,22 +76,37 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved)
             {moveVehicles(vector.getX(), vector.getY());}
         }
-
+        for(int i = 0; i < moveDown.size(); i ++){
+            Vector2d vector = moveDown.get(i);
+            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
+                    && points[vector.getX()][vector.getY()].getSpeed() > 0)
+            {moveVehicles(vector.getX(), vector.getY());}
+        }
         addVehicle(generator1, 7);
         addVehicle(generator2, 5);
-        clearVehicle(3,7);
+        clearVehicle(3,30);
         clearVehicle(75,4);
         time++;
         this.repaint();
     }
 
-    public void moveVehicles(int x, int y){
+    public void setBlocked(int x,int y, boolean value){
+        if(points[x][y].getLength() > 1){
+            for (int j = 0; j < points[x][y].getTail().length; j++){
+                blocked[points[x][y].getTail()[j].getX()][points[x][y].getTail()[j].getY()] = value;
+            }
+        }
+    }
+    public void moveVehicles(int x, int y) {
         int speed = points[x][y].getSpeed();
         int i = 0;
-        Vector2d vector = new Vector2d(x,y);
+        Vector2d vector = new Vector2d(x, y);
+        Vector2d startVector = new Vector2d(x, y);
 
-        while(i < speed && directions[vector.getX()][vector.getY()].size()>0){
-            points[vector.getX()][vector.getY()].moveTail(vector);
+        setBlocked(x,y,false);
+
+        while (i < speed && directions[vector.getX()][vector.getY()].size() > 0) {
+            points[x][y].moveTail(vector);
             vector = directions[vector.getX()][vector.getY()].get(0);
             i++;
         }
@@ -94,11 +114,14 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         points[vector.getX()][vector.getY()] = points[x][y];
         blocked[vector.getX()][vector.getY()] = true;
         points[vector.getX()][vector.getY()].moved = true;
+        points[vector.getX()][vector.getY()].setPosition(vector);
         points[x][y] = new Vehicles(0,0,0,0,
                 new Vector2d(-1,-1),new Vector2d(0,0));
         blocked[x][y] = false;
+        setBlocked(vector.getX(),vector.getY(),true);
 
     }
+
 
     public void clearVehicle(int x,int y){
         if(points[x][y].getLength() > 1){
@@ -133,9 +156,11 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             }
         readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test1.txt", moveRight);
         readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test2.txt", moveLeft);
+        readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test3.txt", moveDown);
+        directions[50][4].add(new Vector2d(50,5));
 
         generator1 = new Generator(new Vector2d(3,4), new Vector2d(-1,0));
-        generator2 = new Generator(new Vector2d(75,7), new Vector2d(1,0));
+        generator2 = new Generator(new Vector2d(75,30), new Vector2d(1,0));;
 
         Vector2d vector = new Vector2d(3,4);
 
@@ -182,7 +207,8 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
         for (x = 0; x < points.length; ++x) {
             for (y = 0; y < points[x].length; ++y) {
-                if (points[x][y].getLength() != 0) {
+                int type = points[x][y].getLength();
+                if (type != 0) {
                     switch (points[x][y].getLength()) {
                         case 1 -> g.setColor(new Color(0xFFEA00));
                         case 2 -> g.setColor(new Color(0x00ff00));
@@ -192,6 +218,14 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
                         case 9 -> g.setColor(new Color(0x000000));
                     }
                     g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+                    if(type == 2 || type == 3){
+                        Vector2d[] tail = points[x][y].getTail();
+                        for(int j = 0; j < type- 1; j++ ){
+                            g.fillRect((tail[j].getX() * size) + 1, (tail[j].getY() * size) + 1, (size - 1), (size - 1));
+                        }
+                    }
+
+
                 }
             }
         }

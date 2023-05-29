@@ -27,10 +27,11 @@ public class Vehicles {
         position = initPosition;
         deceleration = initDeceleration;
         speed = 0;
-        tail  = new Vector2d[length];
-        for(int i = 0; i < length; i++){
-            if(i == 0) tail[i] = position.add(tailVector);
-            else tail[i] = tail[i-1].add(tailVector);
+        if (length > 1) {
+            tail  = new Vector2d[length-1];
+            for(int i = 0; i < length-1; i++){
+                tail[i] = position;
+            }
         }
     }
 
@@ -70,22 +71,27 @@ public class Vehicles {
         }
     }
 
-    public void moveTail(Vector2d vector){
-        if(length == 2){
-            tail[0] = vector;
-        } else if (length == 3) {
-            tail[1] = tail[0];
+    public void moveTail(Vector2d vector) {
+        if (length > 1) {
+            for (int i = length - 2; i > 0; i--) {
+                tail[i] = tail[i - 1];
+            }
             tail[0] = vector;
         }
+
     }
+
+
 
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(position.toString());
-        for (int i = 0; i < length - 1; i++) {
-            stringBuilder.append(" ").append(position.toString());
+        stringBuilder.append("Position: ").append(position).append(", ");
+        stringBuilder.append("Tail: ");
+        if(length > 1){
+            for (int i = 0; i < length-1; i++) {
+                stringBuilder.append(tail[i]).append(" ");
+            }
         }
-
         return stringBuilder.toString();
     }
 
