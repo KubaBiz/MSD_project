@@ -1,11 +1,13 @@
 package org.project;
 
+import java.util.ArrayList;
+
 import static java.lang.Math.max;
 
 
 
 public class Vehicles {
-
+    // VEHICLE PARAMETERS
     private int length;
     private int maxSpeed;
     private int acceleration;
@@ -13,11 +15,10 @@ public class Vehicles {
     private int speed;
     private Vector2d position;
     private Vector2d tail[];
-    public boolean moved;
+    // END OF VEHICLE PARAMETERS
 
-    public void setPosition(Vector2d position) {
-        this.position = position;
-    }
+    private ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
+    public boolean moved;
 
     public Vehicles(int initLength, int initMaxSpeed, int initAcceleration,
                     int initDeceleration, Vector2d initPosition, Vector2d tailVector){
@@ -32,6 +33,9 @@ public class Vehicles {
             for(int i = 0; i < length-1; i++){
                 tail[i] = position;
             }
+        }
+        for (int i = 0; i < 5; i++) {
+            pedestrians.add(null);
         }
     }
 
@@ -60,7 +64,31 @@ public class Vehicles {
 
     public void speedBoost(){ speed = max(maxSpeed, speed + acceleration);}
     public void setLength(int length){ this.length = length;}
+    public void setMaxSpeed(int maxSpeed) {this.maxSpeed = maxSpeed;}
+    public void setAcceleration(int acceleration) {this.acceleration = acceleration;}
+    public void setDeceleration(int deceleration) {this.deceleration = deceleration;}
+    public void setSpeed(int speed) {this.speed = speed;}
+    public void setPosition(Vector2d position) {
+        this.position = position;
+    }
+    public void setTail(/*Vector2d[] tail*/) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (length > 1) {
+            tail  = new Vector2d[length-1];
+            for(int i = 0; i < length-1; i++){
+                tail[i] = position;
+            }
+        }
+    } //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    public void copyVehicleToAnotherTile(Vehicles other){
+        length = other.length;
+        maxSpeed = other.maxSpeed;
+        acceleration = other.acceleration;
+        deceleration = other.deceleration;
+        speed = other.speed;
+        position = other.position;
+        tail = other.tail;
+    }
     public void speedReduction(int obstacleDistance){  //przeszkoda jest cos nieruchomego badz z mniejsza predkoscia
         if(obstacleDistance == 0){
             speed = 0;

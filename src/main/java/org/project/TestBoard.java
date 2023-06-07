@@ -111,13 +111,12 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             i++;
         }
 
-        points[vector.getX()][vector.getY()] = points[x][y];
+        points[vector.getX()][vector.getY()].copyVehicleToAnotherTile(points[x][y]);
         blocked[vector.getX()][vector.getY()] = true;
         points[vector.getX()][vector.getY()].moved = true;
         points[vector.getX()][vector.getY()].setPosition(vector);
-        points[x][y] = new Vehicles(0,0,0,0,
-                new Vector2d(-1,-1),new Vector2d(0,0));
-        blocked[x][y] = false;
+
+        clearVehicle(x, y);
         setBlocked(vector.getX(),vector.getY(),true);
 
     }
@@ -129,8 +128,13 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
                 blocked[points[x][y].getTail()[i].getY()][points[x][y].getTail()[i].getY()] = false;
             }
         }
-        points[x][y] = new Vehicles(0,0,0,0,
-                new Vector2d(-1,-1),new Vector2d(0,0));
+        points[x][y].setLength(0);
+        points[x][y].setSpeed(0);
+        points[x][y].setMaxSpeed(0);
+        points[x][y].setAcceleration(0);
+        points[x][y].setDeceleration(0);
+        points[x][y].setPosition(new Vector2d(-1,-1));
+        points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         blocked[x][y] = false;
     }
     public TestBoard(int length, int height) {
@@ -154,9 +158,11 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
                 directions[x][y] = new ArrayList<>();
                 blocked[x][y] = false;
             }
-        readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test1.txt", moveRight);
-        readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test2.txt", moveLeft);
-        readFile("C:\\Users\\fuska\\MSD_project\\src\\main\\java\\org\\project\\test3.txt", moveDown);
+        String localization = System.getProperty("user.dir");
+
+        readFile(localization + "\\src\\main\\java\\org\\project\\test1.txt", moveRight);
+        readFile(localization + "\\src\\main\\java\\org\\project\\test2.txt", moveLeft);
+        readFile(localization + "\\src\\main\\java\\org\\project\\test3.txt", moveDown);
         directions[50][4].add(new Vector2d(50,5));
 
         generator1 = new Generator(new Vector2d(3,4), new Vector2d(-1,0));
