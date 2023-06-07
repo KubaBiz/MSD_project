@@ -192,6 +192,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		String border = localization + borderPath;
 		String buildings = localization + buildingsPath;
+		String sidewalks = localization + "\\src\\main\\java\\org\\project\\sidewalks.txt";
 		String street1 = localization + str1;
 		String street2 = localization + str2;
 		String street3 = localization + str3;
@@ -214,8 +215,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		readFile(street11, moveStreet11);
 		readFile(street14, moveStreet14);
 
-		drawFromFile(border, 9);
-		drawFromFile(buildings, 8);
+		drawFromFile(border, 9, 0);
+		drawFromFile(buildings, 8, 0);
+		drawFromFile(sidewalks, 0, 1);
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -237,14 +239,19 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 
-	public void drawFromFile(String fileName, int typetoSet){
+	public void drawFromFile(String fileName, int typetoSet, int mode){
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				String[] numbers = line.split(" ");
 				int x = Integer.parseInt(numbers[0]);
 				int y = Integer.parseInt(numbers[1]);
-				points[x][y].setLength(typetoSet);
+				if (mode == 0){
+					points[x][y].setLength(typetoSet);
+				}
+				else if (mode == 1){
+					points[x][y].isSidewalk = true;
+				}
 			}
 		} catch (IOException e) {
 			System.err.println("Błąd odczytu pliku: " + e.getMessage());
@@ -283,6 +290,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		for (x = 0; x < points.length; ++x) {
 			for (y = 0; y < points[x].length; ++y) {
+				if(points[x][y].isSidewalk){
+					g.setColor(new Color(0xAAAAAA));
+					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+				}
 				if (points[x][y].getLength() != 0) {
 					switch (points[x][y].getLength()) {
 						case 1 -> g.setColor(new Color(0xFFEA00));
@@ -309,7 +320,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			}
 			if(editType == 5 && points[x][y].getLength() != editType){
 				String localization = System.getProperty("user.dir");
-				String str1 = "\\src\\main\\java\\org\\project\\buildings.txt";
+				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
 				String fileName = localization + str1;
 				try {
 					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
@@ -341,7 +352,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
 			if(editType == 5 && points[x][y].getLength() != editType){
 				String localization = System.getProperty("user.dir");
-				String str1 = "\\src\\main\\java\\org\\project\\buildings.txt";
+				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
 				String fileName = localization + str1;
 				try {
 					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));

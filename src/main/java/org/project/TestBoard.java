@@ -176,9 +176,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     public void clear() {
         for (int x = 0; x < points.length; ++x)
             for (int y = 0; y < points[x].length; ++y) {
-                points[x][y] = new Vehicles(0,0,0,0,
-                        new Vector2d(-1,-1),new Vector2d(0,0));
-                blocked[x][y] = false;
+                clearVehicle(x, y);
             }
         this.repaint();
     }

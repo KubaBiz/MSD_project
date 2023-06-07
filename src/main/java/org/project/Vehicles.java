@@ -15,10 +15,16 @@ public class Vehicles {
     private int speed;
     private Vector2d position;
     private Vector2d tail[];
+    public boolean moved;
     // END OF VEHICLE PARAMETERS
 
+    // PEDESTRIANS PARAMETERS
+    private static final int SFMAX = 100000;
     private ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
-    public boolean moved;
+
+    public boolean isSidewalk;
+    public int which_exit;
+    // END OF PEDESTRIANS PARAMETERS
 
     public Vehicles(int initLength, int initMaxSpeed, int initAcceleration,
                     int initDeceleration, Vector2d initPosition, Vector2d tailVector){
