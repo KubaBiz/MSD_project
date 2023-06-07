@@ -1,3 +1,5 @@
+// Do usunięcia jak nie korzystamy!
+
 package org.project;
 
 import static java.lang.Math.random;
