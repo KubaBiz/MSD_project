@@ -20,7 +20,7 @@ public class Vehicles {
 
     // PEDESTRIANS PARAMETERS
     private static final int SFMAX = 100000;
-    private ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
+    public ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
 
     public boolean isSidewalk;
     public int which_exit;
@@ -40,9 +40,9 @@ public class Vehicles {
                 tail[i] = position;
             }
         }
-        for (int i = 0; i < 5; i++) {
-            pedestrians.add(null);
-        }
+        //for (int i = 0; i < 5; i++) {
+        //    pedestrians.add(null);
+        //}
     }
 
     public Vector2d getPosition(){

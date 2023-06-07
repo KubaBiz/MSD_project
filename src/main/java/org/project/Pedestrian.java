@@ -4,6 +4,7 @@ public class Pedestrian {
     private final int timeToMove;
     private final int exit;
     private int iteration;
+    public int moved;
     public Pedestrian(int iterationsToMove, int initExit){
         if (iterationsToMove < 0) {System.out.println("Pieszy szybszy od swiatla");}
         timeToMove = iterationsToMove;

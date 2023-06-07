@@ -71,6 +71,16 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	//single iteration
 	public void iteration() {
+		// RUCH PIESZYCH
+		//for (int x = 0; x < points.length; ++x) {
+		//	for ( int y = 0; y < points[x].length; ++y){
+		//		for (Pedestrian pedestrian: points[x][y].pedestrians){
+		//			movePedestrian(pedestrian);
+		//		}
+		//		if
+		//	}
+		//}
+		//
 		for (int x = 0; x < points.length; ++x) {
 			for ( int y = 0; y < points[x].length; ++y){
 				if(blocked[x][y]) points[x][y].moved = false;
