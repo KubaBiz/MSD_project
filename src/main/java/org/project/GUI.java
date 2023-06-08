@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public class GUI extends JPanel implements ActionListener, ChangeListener {
 	private static final long serialVersionUID = 1L;
 	private Timer timer;
-	private Board board;
+	private TestBoard board;
 	private JButton start;
 	private JButton clear;
 	private JComboBox<Integer> drawType;
@@ -56,7 +56,7 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 		buttonPanel.add(drawType);
 		buttonPanel.add(pred);
 
-		board = new Board(1024, 768 - buttonPanel.getHeight());
+		board = new TestBoard(1024, 768 - buttonPanel.getHeight());
 		container.add(board, BorderLayout.CENTER);
 		container.add(buttonPanel, BorderLayout.SOUTH);
 	}

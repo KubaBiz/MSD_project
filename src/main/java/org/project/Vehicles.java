@@ -1,7 +1,9 @@
 package org.project;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 
@@ -21,8 +23,10 @@ public class Vehicles {
     // PEDESTRIANS PARAMETERS
     private static final int SFMAX = 100000;
     public ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
-
+    public ArrayList<Vehicles> neighbors = new ArrayList<>();
+    public ArrayList<Integer> staticFields = new ArrayList<>(8);
     public boolean isSidewalk;
+    public boolean isExit;
     public int which_exit;
     // END OF PEDESTRIANS PARAMETERS
 
@@ -43,6 +47,9 @@ public class Vehicles {
         //for (int i = 0; i < 5; i++) {
         //    pedestrians.add(null);
         //}
+        for (int i = 0; i < 8; i++) {
+            staticFields.add(SFMAX);
+        }
     }
 
     public Vector2d getPosition(){
@@ -114,7 +121,134 @@ public class Vehicles {
         }
 
     }
+    //PEDESTRIAN FUNCTIONS
+    public boolean calcStaticField(int type) {
+        if (type == 0) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(0) <= min) {
+                    min = neighbor.staticFields.get(0);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(0) > min + 1) {
+                staticFields.set(0, min + 1);
+                return true;
+            }
+            return false;
+        }
+        //else if (type == 2){
+        //    if (this.type == 1){
+        //        staticFieldSecond = SFMAX;
+        //        return false;
+        //    }
+        //    int min = SFMAX;
+        //    for (Point neighbor : neighbors) {
+        //        if (neighbor.staticFieldSecond <= min) {
+        //            min = neighbor.staticFieldSecond;
+        //        }
+        //        if (neighbor.type == 1){
+        //            walls += 1;
+        //        }
+        //    }
+        //    if (staticFieldSecond > min + 1) {
+        //        staticFieldSecond = min + 1 + walls;
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        return false;
+    }
 
+    public void movePedestrians(){
+
+        for (Pedestrian pedestrian: pedestrians) {
+            if (pedestrian.getIteration() > 0) {
+                pedestrian.minusIteration();
+                return;
+            }
+            if (pedestrian.getExit() == 1) {
+                if (!pedestrian.moved) {
+                    int min = SFMAX;
+                    ArrayList<Vehicles> possible = new ArrayList<>();
+                    for (Vehicles neighbor : neighbors) {
+                        if (neighbor.staticFields.get(0) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                            min = neighbor.staticFields.get(0);
+                            possible.clear();
+                            possible.add(neighbor);
+                        } else if (neighbor.staticFields.get(0) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                            possible.add(neighbor);
+                        }
+                    }
+
+                    if (possible.size() > 0) {
+                        Random random = new Random();
+                        //Vehicles next = possible.get(random.nextInt(possible.size()));
+                        Vehicles next = possible.get(0);
+                        if (next.isExit) {
+                            pedestrian.toRemove = true;
+                        } else {
+                            pedestrian.toRemove = true;
+                            pedestrian.iteration = pedestrian.getTimeToMove();
+                            next.pedestrians.add(pedestrian);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = pedestrians.size()-1; i>-1; i--){
+            if (pedestrians.get(i).toRemove){
+                pedestrians.remove(i);
+            }
+        }
+        //if (which_exit == 2){
+        //    if (isPedestrian && !blocked) {
+        //        int min = SFMAX;
+        //        ArrayList<Point> possible = new ArrayList<>();
+        //        for (Point neighbor : neighbors) {
+        //            if (neighbor.type != 1) {
+        //                if (neighbor.staticFieldSecond < min && !neighbor.isPedestrian) {
+        //                    min = neighbor.staticFieldSecond;
+        //                    possible.clear();
+        //                    possible.add(neighbor);
+        //                } else if (neighbor.staticFieldSecond == min && !neighbor.isPedestrian) {
+        //                    possible.add(neighbor);
+        //                }
+        //            }
+        //        }
+//
+        //        if (possible.size() > 0) {
+        //            Random random = new Random();
+        //            Point next = possible.get(random.nextInt(possible.size()));
+        //            if (next.type == 2 || next.type == 4) {
+        //                isPedestrian = false;
+        //                type = 0;
+        //                which_exit = 0;
+        //            } else {
+        //                next.isPedestrian = true;
+        //                next.type = 3;
+        //                next.which_exit = which_exit;
+        //                next.wait = 1;
+        //                which_exit = 0;
+        //                isPedestrian = false;
+        //                type = 0;
+        //                next.blocked = true;
+        //            }
+        //        }
+        //    }
+        //}
+    }
+
+    public void clearPedestrians(){
+        pedestrians.clear();
+        for (int i = 0; i < 8; i++){
+            staticFields.set(i, SFMAX);
+        }
+    }
+    public void addNeighbor(Vehicles nei) {
+        neighbors.add(nei);
+    }
+    //END OF PEDESTRIAN FUNCTIONS
 
 
     public String toString() {

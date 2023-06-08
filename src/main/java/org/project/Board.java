@@ -72,14 +72,29 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	//single iteration
 	public void iteration() {
 		// RUCH PIESZYCH
-		//for (int x = 0; x < points.length; ++x) {
-		//	for ( int y = 0; y < points[x].length; ++y){
-		//		for (Pedestrian pedestrian: points[x][y].pedestrians){
-		//			movePedestrian(pedestrian);
-		//		}
-		//		if
-		//	}
-		//}
+		for (int x = 1; x < points.length-1; ++x) {
+			for (int y = 1; y < points[x].length - 1; ++y) {
+				for (int z = 0; z < points[x][y].pedestrians.size(); z++){
+					points[x][y].pedestrians.get(z).moved=false;
+				}
+			}
+		}
+		for (int x = 1; x < points.length-1; ++x) {
+			for ( int y = 1; y < points[x].length-1; ++y){
+				points[x][y].movePedestrians();
+				if (points[x][y].pedestrians.size() > 0){
+					blocked[x][y] = true;
+				}
+			}
+		}
+
+		for (int x = 1; x < points.length-1; ++x) {
+			for (int y = 1; y < points[x].length - 1; ++y) {
+				if (points[x][y].getLength() == 0 && points[x][y].pedestrians.size() == 0){
+					blocked[x][y] = false;
+				}
+			}
+		}
 		//
 		for (int x = 0; x < points.length; ++x) {
 			for ( int y = 0; y < points[x].length; ++y){
@@ -154,14 +169,31 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		this.repaint();
 	}
 
+	public void clearVehicle(int x,int y){
+		if(points[x][y].getLength() > 1){
+			for(int i = 0 ; i < points[x][y].getTail().length-1; i ++){
+				blocked[points[x][y].getTail()[i].getY()][points[x][y].getTail()[i].getY()] = false;
+			}
+		}
+		points[x][y].setLength(0);
+		points[x][y].setSpeed(0);
+		points[x][y].setMaxSpeed(0);
+		points[x][y].setAcceleration(0);
+		points[x][y].setDeceleration(0);
+		points[x][y].setPosition(new Vector2d(-1,-1));
+		points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		blocked[x][y] = false;
+	}
+
 	// clearing board
 	public void clear() {
 		for (int x = 0; x < points.length; ++x)
 			for (int y = 0; y < points[x].length; ++y) {
-				points[x][y] = new Vehicles(0,0,0,0,
-						new Vector2d(-1,-1),new Vector2d(0,0));
-				blocked[x][y] = false;
+				clearVehicle(x, y);
+				points[x][y].clearPedestrians();
 			}
+
+		calculateFirstField();
 		this.repaint();
 	}
 
@@ -181,7 +213,20 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				directions[x][y] = new ArrayList<>();
 				blocked[x][y] = false;
 			}
-
+		//PEDESTRIANS
+		for (int x = 1; x < points.length-1; ++x) {
+			for (int y = 1; y < points[x].length-1; ++y) {
+				points[x][y].addNeighbor(points[x-1][y-1]);
+				points[x][y].addNeighbor(points[x-1][y]);
+				points[x][y].addNeighbor(points[x-1][y+1]);
+				points[x][y].addNeighbor(points[x][y+1]);
+				points[x][y].addNeighbor(points[x][y-1]);
+				points[x][y].addNeighbor(points[x+1][y-1]);
+				points[x][y].addNeighbor(points[x+1][y]);
+				points[x][y].addNeighbor(points[x+1][y+1]);
+			}
+		}
+		//
 		String localization = System.getProperty("user.dir");
 		String str1 = "\\src\\main\\java\\org\\project\\street1.txt";
 		String str2 = "";
@@ -228,6 +273,18 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawFromFile(border, 9, 0);
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
+
+// 9 2
+// 53 16
+// 9 14
+		points[9][2].which_exit = 1;
+		points[9][2].isExit = true;
+		for (int i = 0; i < 5; i++) {
+			points[9][14].pedestrians.add(new Pedestrian(2, 2));
+		}
+		points[53][16].pedestrians.add(new Pedestrian(2, 1));
+		//points[][]
+		calculateFirstField();
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -268,6 +325,32 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 
+	//PEDESTRIANS
+	public void calculateFirstField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==1){
+					points[x][y].staticFields.set(0, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(0)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(0) >temp.staticFields.get(0)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+
 	//paint background and separators between cells
 	protected void paintComponent(Graphics g) {
 		if (isOpaque()) {
@@ -303,6 +386,14 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				if(points[x][y].isSidewalk){
 					g.setColor(new Color(0xAAAAAA));
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+					if (points[x][y].staticFields.get(0) < 100){
+						g.setColor(new Color(0x0000FF));
+						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+					}
+					if (points[x][y].pedestrians.size() > 0){
+						g.setColor(new Color(0xFF00FF));
+						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+					}
 				}
 				if (points[x][y].getLength() != 0) {
 					switch (points[x][y].getLength()) {
