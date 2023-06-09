@@ -194,6 +194,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			}
 
 		calculateFirstField();
+		calculateFourthField();
 		this.repaint();
 	}
 
@@ -275,17 +276,19 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawFromFile(sidewalks, 0, 1);
 
 // 9 2
-// 53 16
-// 9 14
-		points[9][2].which_exit = 1;
+// 66 2
+		points[9][2].which_exit = 1; // 0 na rysunku piesi.png
 		points[9][2].isExit = true;
-		points[61][15].which_exit = 1;
-		points[61][15].isExit = true;
+		points[66][2].which_exit = 4; // 3 na rysunku piesi.png
+		points[66][2].isExit = true;
 		for (int i = 0; i < 5; i++) {
-			points[9][14].pedestrians.add(new Pedestrian(2, 1));
+			points[9][11].pedestrians.add(new Pedestrian(i%2 + 2, 4));
 		}
-		points[53][16].pedestrians.add(new Pedestrian(5, 1));
+		for (int i = 0; i < 5; i++) {
+			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
+		}
 		calculateFirstField();
+		calculateFourthField();
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -344,6 +347,31 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			if(temp.isSidewalk && temp.calcStaticField(0)) {
 				for (Vehicles neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(0) >temp.staticFields.get(0)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+
+	public void calculateFourthField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==4){
+					points[x][y].staticFields.set(3, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(3)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(3) >temp.staticFields.get(3)){
 						toCheck.add(neighbor);
 					}
 				}
