@@ -11,6 +11,8 @@ public class Pedestrian {
         timeToMove = iterationsToMove;
         exit = initExit;
         iteration = 0;
+        toRemove = false;
+        moved = false;
     }
 
     public int getTimeToMove() {return timeToMove;}

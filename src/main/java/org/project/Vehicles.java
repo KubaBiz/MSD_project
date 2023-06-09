@@ -163,80 +163,46 @@ public class Vehicles {
     public void movePedestrians(){
 
         for (Pedestrian pedestrian: pedestrians) {
+            if(pedestrian.moved){
+                continue;
+            }
             if (pedestrian.getIteration() > 0) {
                 pedestrian.minusIteration();
-                return;
+                continue;
             }
             if (pedestrian.getExit() == 1) {
-                if (!pedestrian.moved) {
-                    int min = SFMAX;
-                    ArrayList<Vehicles> possible = new ArrayList<>();
-                    for (Vehicles neighbor : neighbors) {
-                        if (neighbor.staticFields.get(0) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
-                            min = neighbor.staticFields.get(0);
-                            possible.clear();
-                            possible.add(neighbor);
-                        } else if (neighbor.staticFields.get(0) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
-                            possible.add(neighbor);
-                        }
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(0) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(0);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(0) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
                     }
-
-                    if (possible.size() > 0) {
-                        Random random = new Random();
-                        //Vehicles next = possible.get(random.nextInt(possible.size()));
-                        Vehicles next = possible.get(0);
-                        if (next.isExit) {
-                            pedestrian.toRemove = true;
-                        } else {
-                            pedestrian.toRemove = true;
-                            pedestrian.iteration = pedestrian.getTimeToMove();
-                            next.pedestrians.add(pedestrian);
-                        }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
                     }
                 }
             }
         }
         for (int i = pedestrians.size()-1; i>-1; i--){
             if (pedestrians.get(i).toRemove){
+                pedestrians.get(i).toRemove = false;
                 pedestrians.remove(i);
             }
         }
-        //if (which_exit == 2){
-        //    if (isPedestrian && !blocked) {
-        //        int min = SFMAX;
-        //        ArrayList<Point> possible = new ArrayList<>();
-        //        for (Point neighbor : neighbors) {
-        //            if (neighbor.type != 1) {
-        //                if (neighbor.staticFieldSecond < min && !neighbor.isPedestrian) {
-        //                    min = neighbor.staticFieldSecond;
-        //                    possible.clear();
-        //                    possible.add(neighbor);
-        //                } else if (neighbor.staticFieldSecond == min && !neighbor.isPedestrian) {
-        //                    possible.add(neighbor);
-        //                }
-        //            }
-        //        }
-//
-        //        if (possible.size() > 0) {
-        //            Random random = new Random();
-        //            Point next = possible.get(random.nextInt(possible.size()));
-        //            if (next.type == 2 || next.type == 4) {
-        //                isPedestrian = false;
-        //                type = 0;
-        //                which_exit = 0;
-        //            } else {
-        //                next.isPedestrian = true;
-        //                next.type = 3;
-        //                next.which_exit = which_exit;
-        //                next.wait = 1;
-        //                which_exit = 0;
-        //                isPedestrian = false;
-        //                type = 0;
-        //                next.blocked = true;
-        //            }
-        //        }
-        //    }
-        //}
     }
 
     public void clearPedestrians(){

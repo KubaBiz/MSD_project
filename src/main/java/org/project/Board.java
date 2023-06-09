@@ -279,11 +279,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 // 9 14
 		points[9][2].which_exit = 1;
 		points[9][2].isExit = true;
+		points[61][15].which_exit = 1;
+		points[61][15].isExit = true;
 		for (int i = 0; i < 5; i++) {
-			points[9][14].pedestrians.add(new Pedestrian(2, 2));
+			points[9][14].pedestrians.add(new Pedestrian(2, 1));
 		}
-		points[53][16].pedestrians.add(new Pedestrian(2, 1));
-		//points[][]
+		points[53][16].pedestrians.add(new Pedestrian(5, 1));
 		calculateFirstField();
 	}
 
@@ -394,6 +395,14 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 						g.setColor(new Color(0xFF00FF));
 						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 					}
+					switch (points[x][y].pedestrians.size()){
+						case 1 -> g.setColor(new Color(0xFF5500));
+						case 2 -> g.setColor(new Color(0xFF0011));
+						case 3 -> g.setColor(new Color(0xFF0066));
+						case 4 -> g.setColor(new Color(0xFF00AA));
+						case 5 -> g.setColor(new Color(0xFF00FF));
+					}
+					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
 				if (points[x][y].getLength() != 0) {
 					switch (points[x][y].getLength()) {
