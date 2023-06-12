@@ -6,9 +6,7 @@ import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,16 +15,24 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
     private Vehicles[][] points;
     private List<Vector2d>[][] directions;
-    private List<Vector2d> moveRight = new ArrayList<>();
-    private List<Vector2d> moveLeft = new ArrayList<>();
-    private List<Vector2d> moveDown = new ArrayList<>();
+    private List<Vector2d> crossroads = new ArrayList<>();
+    private List<Vector2d> street1 = new ArrayList<>();
+
+    private List<Vector2d> street2 = new ArrayList<>();
+    private List<Vector2d> street3 = new ArrayList<>();
+    private List<Vector2d> street4 = new ArrayList<>();
+    private List<Vector2d> street5 = new ArrayList<>();
+    private List<Vector2d> street6 = new ArrayList<>();
+    private List<Vector2d> street7 = new ArrayList<>();
+    private List<Vector2d> street8 = new ArrayList<>();
     private Boolean[][] blocked;
-    Generator generator1;
-    Generator generator2;
+    Generator generator1;;
     private int size = 12;
     public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
     public int editType = 0;
     private int time = 0;
+
+
     public int carInFront(int x, int y, int maxSpeed){
         int sum = 0;
         int i = 0;
@@ -44,6 +50,16 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         return sum;
     }
 
+    public void moveOnStreet(List<Vector2d> streetName){
+        for(int i = 0; i < streetName.size(); i ++){
+            Vector2d vector = streetName.get(i);
+            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved)
+            {
+//                setSpeed(vector.getX(), vector.getY());
+                moveVehicles(vector.getX(), vector.getY());}
+        }
+    }
+
     public void addVehicle(Generator generator, int frequency){
         if( time % frequency == 0){
             Vehicles vehicle = generator.generateVehicle();
@@ -51,41 +67,39 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
         }
     }
+    public void setSpeed(int x, int y){
+        int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
+        points[x][y].speedBoost();
+        points[x][y].speedReduction(obstacle);
+
+    }
+
     public void iteration() {
         for (int x = 0; x < points.length; ++x) {
             for ( int y = 0; y < points[x].length; ++y){
                 if(points[x][y].getLength() > 0 ){
                     points[x][y].moved = false;
-                    int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
-//                    if(x == 50 && (y == 27 || y == 29 || y == 30) && carInFront(60,30,20) < 19) {
-//                        obstacle = 1;
-//                    }
-                    points[x][y].speedBoost();
-                    points[x][y].speedReduction(obstacle);
+                    setSpeed(x,y);
                 }
             }
         }
 
-        for(int i = 0; i < moveRight.size(); i ++){
-            Vector2d vector = moveRight.get(i);
-            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved)
-                {moveVehicles(vector.getX(), vector.getY());}
-        }
-        for(int i = 0; i < moveLeft.size(); i ++){
-            Vector2d vector = moveLeft.get(i);
-            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved)
-            {moveVehicles(vector.getX(), vector.getY());}
-        }
-        for(int i = 0; i < moveDown.size(); i ++){
-            Vector2d vector = moveDown.get(i);
-            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
-                    && points[vector.getX()][vector.getY()].getSpeed() > 0)
-            {moveVehicles(vector.getX(), vector.getY());}
-        }
-        addVehicle(generator1, 7);
-        addVehicle(generator2, 5);
-        clearVehicle(3,30);
-        clearVehicle(75,4);
+        moveOnStreet(street1);
+        moveOnStreet(street2);
+        moveOnStreet(street3);
+        moveOnStreet(street4);
+        moveOnStreet(street5);
+        moveOnStreet(street6);
+        moveOnStreet(street7);
+        moveOnStreet(street8);
+        moveOnStreet(crossroads);
+
+        addVehicle(generator1, 15);
+        clearVehicle(57, 21);
+        clearVehicle(41,4);
+        clearVehicle(24, 20);
+        clearVehicle(40, 37);
+
         time++;
         this.repaint();
     }
@@ -107,7 +121,9 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
         while (i < speed && directions[vector.getX()][vector.getY()].size() > 0) {
             points[x][y].moveTail(vector);
-            vector = directions[vector.getX()][vector.getY()].get(0);
+            Random r = new Random();
+            vector = directions[vector.getX()][vector.getY()].get(r.nextInt(directions[vector.getX()][vector.getY()].size()));
+
             i++;
         }
 
@@ -118,6 +134,8 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
         clearVehicle(x, y);
         setBlocked(vector.getX(),vector.getY(),true);
+
+
 
     }
 
@@ -160,16 +178,49 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             }
         String localization = System.getProperty("user.dir");
 
-        readFile(localization + "\\src\\main\\java\\org\\project\\test1.txt", moveRight);
-        readFile(localization + "\\src\\main\\java\\org\\project\\test2.txt", moveLeft);
-        readFile(localization + "\\src\\main\\java\\org\\project\\test3.txt", moveDown);
-        directions[50][4].add(new Vector2d(50,5));
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet1.txt", street1);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet2.txt", street2);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet3.txt", street3);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet4.txt", street4);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet5.txt", street5);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet6.txt", street6);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet7.txt", street7);
+        readFile(localization + "\\src\\main\\java\\org\\project\\testStreet8.txt", street8);
+        Vector2d vector1 = new Vector2d(41,21);
+        Vector2d vector2= new Vector2d(41, 20);
+        Vector2d vector3 = new Vector2d(40, 21);
+        Vector2d vector4 = new Vector2d(40,20);
+        directions[41][22].add(vector1);
+        directions[42][20].add(vector2);
+        directions[40][19].add(vector4);
+        directions[39][21].add(vector3);
 
-        generator1 = new Generator(new Vector2d(3,4), new Vector2d(-1,0));
-        generator2 = new Generator(new Vector2d(75,30), new Vector2d(1,0));;
+        directions[41][21].add(new Vector2d(42,21));
+        directions[41][21].add(vector2);
 
-        Vector2d vector = new Vector2d(3,4);
+        directions[41][20].add(new Vector2d(41,19));
+        directions[41][20].add(vector4);
 
+        directions[40][20].add(new Vector2d(39,20));
+        directions[40][20].add(vector3);
+
+        directions[40][21].add(new Vector2d(40,22));
+        directions[40][21].add(vector1);
+
+        generator1 = new Generator(new Vector2d(57,20), new Vector2d(-1,0));
+        Vector2d tmp = new Vector2d(57,20);
+
+        while(directions[tmp.getX()][tmp.getY()].size()>0){
+            System.out.println(tmp.toString());
+            tmp = directions[tmp.getX()][tmp.getY()].get(0);
+        }
+
+
+        crossroads.add(vector1);
+        crossroads.add(vector2);
+        crossroads.add(vector3);
+        crossroads.add(vector4);
+        crossroads.add(new Vector2d(42,20));
     }
 
 
@@ -229,10 +280,14 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
                         }
                     }
 
-
                 }
             }
         }
+        g.setColor(new Color(0x000000));
+//        g.fillRect((41 * size) + 1, (21 * size) + 1, (size - 1), (size - 1));
+//        g.fillRect((41 * size) + 1, (20 * size) + 1, (size - 1), (size - 1));
+//        g.fillRect((40 * size) + 1, (21 * size) + 1, (size - 1), (size - 1));
+//        g.fillRect((40 * size) + 1, (20 * size) + 1, (size - 1), (size - 1));
 
     }
 
@@ -276,8 +331,17 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     }
 
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX() / size;
+        int y = e.getY() / size;
+        if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
+            if(editType<4) {
+                points[x][y].setLength(editType);
+                System.out.println(String.valueOf(x) + " " + String.valueOf(y));
+                this.repaint();
+            }
 
+        }
     }
 
     @Override
