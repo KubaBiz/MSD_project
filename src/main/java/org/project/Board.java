@@ -282,7 +282,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[66][2].which_exit = 4; // 3 na rysunku piesi.png
 		points[66][2].isExit = true;
 		for (int i = 0; i < 5; i++) {
-			points[9][11].pedestrians.add(new Pedestrian(i%2 + 2, 4));
+			points[9][9].pedestrians.add(new Pedestrian(i%2 + 2, 4));
 		}
 		for (int i = 0; i < 5; i++) {
 			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
