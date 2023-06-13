@@ -194,7 +194,13 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			}
 
 		calculateFirstField();
+		calculateSecondField();
+		calculateThirdField();
 		calculateFourthField();
+		calculateFifthField();
+		calculateSixthField();
+		calculateSeventhField();
+		calculateEighthField();
 		this.repaint();
 	}
 
@@ -275,12 +281,23 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
 
-// 9 2
-// 66 2
-		points[9][2].which_exit = 1; // 0 na rysunku piesi.png
-		points[9][2].isExit = true;
-		points[66][2].which_exit = 4; // 3 na rysunku piesi.png
-		points[66][2].isExit = true;
+
+		points[9][1].which_exit = 1; // 0 na rysunku piesi.png
+		points[9][1].isExit = true;
+		points[7][36].which_exit = 2; // 1 na rysunku piesi.png
+		points[7][36].isExit = true;
+		points[12][36].which_exit = 3; // 2 na rysunku piesi.png
+		points[12][36].isExit = true;
+		points[66][1].which_exit = 4; // 3 na rysunku piesi.png
+		points[66][1].isExit = true;
+		points[73][1].which_exit = 5; // 4 na rysunku piesi.png
+		points[73][1].isExit = true;
+		points[76][16].which_exit = 6; // 5 na rysunku piesi.png
+		points[76][16].isExit = true;
+		points[76][19].which_exit = 7; // 6 na rysunku piesi.png
+		points[76][19].isExit = true;
+		points[73][36].which_exit = 8; // 7 na rysunku piesi.png
+		points[73][36].isExit = true;
 		for (int i = 0; i < 5; i++) {
 			points[9][9].pedestrians.add(new Pedestrian(i%2 + 2, 4));
 		}
@@ -288,7 +305,13 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
 		}
 		calculateFirstField();
+		calculateSecondField();
+		calculateThirdField();
 		calculateFourthField();
+		calculateFifthField();
+		calculateSixthField();
+		calculateSeventhField();
+		calculateEighthField();
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -346,7 +369,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			Vehicles temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(0)) {
 				for (Vehicles neighbor : temp.neighbors) {
-					if (neighbor.staticFields.get(0) >temp.staticFields.get(0)){
+					if (neighbor.staticFields.get(0) > temp.staticFields.get(0)){
 						toCheck.add(neighbor);
 					}
 				}
@@ -354,7 +377,54 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			toCheck.remove(0);
 		}
 	}
+	public void calculateSecondField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==2){
+					points[x][y].staticFields.set(1, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
 
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(1)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(1) > temp.staticFields.get(1)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+	public void calculateThirdField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==3){
+					points[x][y].staticFields.set(2, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(2)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(2) > temp.staticFields.get(2)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
 	public void calculateFourthField(){
 		ArrayList<Vehicles> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
@@ -371,7 +441,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			Vehicles temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(3)) {
 				for (Vehicles neighbor : temp.neighbors) {
-					if (neighbor.staticFields.get(3) >temp.staticFields.get(3)){
+					if (neighbor.staticFields.get(3) > temp.staticFields.get(3)){
 						toCheck.add(neighbor);
 					}
 				}
@@ -379,6 +449,105 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			toCheck.remove(0);
 		}
 	}
+	public void calculateFifthField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==5){
+					points[x][y].staticFields.set(4, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(4)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(4) > temp.staticFields.get(4)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+	public void calculateSixthField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==6){
+					points[x][y].staticFields.set(5, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(5)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(5) > temp.staticFields.get(5)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+	public void calculateSeventhField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==7){
+					points[x][y].staticFields.set(6, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(6)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(6) > temp.staticFields.get(6)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+	public void calculateEighthField(){
+		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		for (int x = 1; x < points.length-1; ++x){
+			for (int y = 1; y < points[x].length-1; ++y){
+				if(points[x][y].isSidewalk && points[x][y].which_exit==8){
+					points[x][y].staticFields.set(7, 0);
+					toCheck.addAll(points[x][y].neighbors);
+				}
+			}
+		}
+
+		while(!toCheck.isEmpty()){
+			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
+			Vehicles temp=toCheck.get(0);
+			if(temp.isSidewalk && temp.calcStaticField(7)) {
+				for (Vehicles neighbor : temp.neighbors) {
+					if (neighbor.staticFields.get(7) > temp.staticFields.get(7)){
+						toCheck.add(neighbor);
+					}
+				}
+			}
+			toCheck.remove(0);
+		}
+	}
+	//END OF PEDESTRIANS
+
+
 
 	//paint background and separators between cells
 	protected void paintComponent(Graphics g) {

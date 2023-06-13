@@ -132,6 +132,34 @@ public class Vehicles {
             }
             return false;
         }
+        else if (type == 1) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(1) <= min) {
+                    min = neighbor.staticFields.get(1);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(1) > min + 1) {
+                staticFields.set(1, min + 1);
+                return true;
+            }
+            return false;
+        }
+        else if (type == 2) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(2) <= min) {
+                    min = neighbor.staticFields.get(2);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(2) > min + 1) {
+                staticFields.set(2, min + 1);
+                return true;
+            }
+            return false;
+        }
         else if (type == 3) {
             int min = SFMAX;
             for (Vehicles neighbor : neighbors) {
@@ -142,6 +170,62 @@ public class Vehicles {
             }
             if (staticFields.get(3) > min + 1) {
                 staticFields.set(3, min + 1);
+                return true;
+            }
+            return false;
+        }
+        else if (type == 4) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(4) <= min) {
+                    min = neighbor.staticFields.get(4);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(4) > min + 1) {
+                staticFields.set(4, min + 1);
+                return true;
+            }
+            return false;
+        }
+        else if (type == 5) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(5) <= min) {
+                    min = neighbor.staticFields.get(5);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(5) > min + 1) {
+                staticFields.set(5, min + 1);
+                return true;
+            }
+            return false;
+        }
+        else if (type == 6) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(6) <= min) {
+                    min = neighbor.staticFields.get(6);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(6) > min + 1) {
+                staticFields.set(6, min + 1);
+                return true;
+            }
+            return false;
+        }
+        else if (type == 7) {
+            int min = SFMAX;
+            for (Vehicles neighbor : neighbors) {
+                if (neighbor.staticFields.get(7) <= min) {
+                    min = neighbor.staticFields.get(7);
+                }
+                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
+            }
+            if (staticFields.get(7) > min + 1) {
+                staticFields.set(7, min + 1);
                 return true;
             }
             return false;
@@ -186,6 +270,60 @@ public class Vehicles {
                 }
                 continue;
             }
+            if (pedestrian.getExit() == 2) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(1) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(1);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(1) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
+            if (pedestrian.getExit() == 3) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(2) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(2);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(2) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
             if (pedestrian.getExit() == 4) {
                 int min = SFMAX;
                 ArrayList<Vehicles> possible = new ArrayList<>();
@@ -195,6 +333,114 @@ public class Vehicles {
                         possible.clear();
                         possible.add(neighbor);
                     } else if (neighbor.staticFields.get(3) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
+            if (pedestrian.getExit() == 5) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(4) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(4);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(4) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
+            if (pedestrian.getExit() == 6) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(5) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(5);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(5) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
+            if (pedestrian.getExit() == 7) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(6) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(6);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(6) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        possible.add(neighbor);
+                    }
+                }
+                if (possible.size() > 0) {
+                    Random random = new Random();
+                    //Vehicles next = possible.get(random.nextInt(possible.size()));
+                    Vehicles next = possible.get(0);
+                    if (next.isExit) {
+                        pedestrian.toRemove = true;
+                    } else {
+                        pedestrian.toRemove = true;
+                        pedestrian.iteration = pedestrian.getTimeToMove();
+                        next.pedestrians.add(pedestrian);
+                        pedestrian.moved = true;
+                    }
+                }
+                continue;
+            }
+            if (pedestrian.getExit() == 8) {
+                int min = SFMAX;
+                ArrayList<Vehicles> possible = new ArrayList<>();
+                for (Vehicles neighbor : neighbors) {
+                    if (neighbor.staticFields.get(7) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
+                        min = neighbor.staticFields.get(7);
+                        possible.clear();
+                        possible.add(neighbor);
+                    } else if (neighbor.staticFields.get(7) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
                         possible.add(neighbor);
                     }
                 }
