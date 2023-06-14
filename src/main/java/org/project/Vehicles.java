@@ -22,6 +22,11 @@ public class Vehicles {
     private static final int SFMAX = 100000;
     public ArrayList<Pedestrian> pedestrians = new ArrayList<>(5);
     public ArrayList<Vehicles> neighbors = new ArrayList<>();
+
+    public Vehicles downNeighbor;
+    public Vehicles rightNeighbor;
+    public Vehicles leftNeighbor;
+    public Vehicles upNeighbor;
     public ArrayList<Integer> staticFields = new ArrayList<>(8);
     public boolean isSidewalk;
     public boolean isExit;
@@ -313,6 +318,12 @@ public class Vehicles {
                     Random random = new Random();
                     //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Vehicles next = possible.get(0);
+                    for (Vehicles element : possible) {
+                        if (element.equals(downNeighbor)) {
+                            next = element;
+                            break;
+                        }
+                    }
                     if (next.isExit) {
                         pedestrian.toRemove = true;
                     } else {

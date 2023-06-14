@@ -310,6 +310,25 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         }
     }
 
+    public void drawFromFile(String fileName, int typetoSet, int mode){
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] numbers = line.split(" ");
+                int x = Integer.parseInt(numbers[0]);
+                int y = Integer.parseInt(numbers[1]);
+                if (mode == 0){
+                    points[x][y].setLength(typetoSet);
+                }
+                else if (mode == 1){
+                    System.out.println("ustawiam chodnik");
+                    points[x][y].isSidewalk = true;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Błąd odczytu pliku: " + e.getMessage());
+        }
+    }
     @Override
     public void componentResized(ComponentEvent componentEvent) {
 

@@ -23,6 +23,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	Generator generator10;
 	Generator generator11;
 	Generator generator14;
+	PedestrianGenerator generatorek;
 	private List<Vector2d> moveDownList = new ArrayList<>();
 	private List<Vector2d> moveUpList = new ArrayList<>();
 	private List<Vector2d> moveStreet10 = new ArrayList<>();
@@ -166,6 +167,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			blocked[generator3.getPosition().getX()][generator3.getPosition().getY()] = true;
 		}
 
+		generatorek.generate();
 		this.repaint();
 	}
 
@@ -225,11 +227,15 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			for (int y = 1; y < points[x].length-1; ++y) {
 				points[x][y].addNeighbor(points[x-1][y-1]);
 				points[x][y].addNeighbor(points[x-1][y]);
+				points[x][y].leftNeighbor = points[x-1][y];
 				points[x][y].addNeighbor(points[x-1][y+1]);
 				points[x][y].addNeighbor(points[x][y+1]);
+				points[x][y].downNeighbor = points[x][y+1];
 				points[x][y].addNeighbor(points[x][y-1]);
+				points[x][y].upNeighbor = points[x][y-1];
 				points[x][y].addNeighbor(points[x+1][y-1]);
 				points[x][y].addNeighbor(points[x+1][y]);
+				points[x][y].rightNeighbor = points[x+1][y];
 				points[x][y].addNeighbor(points[x+1][y+1]);
 			}
 		}
@@ -281,7 +287,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
 
-
+		generatorek = new PedestrianGenerator(new int[]{25,25,0,0},new int[]{20,10,10,10,10,10,10},points[57][16]);
 		points[9][1].which_exit = 1; // 0 na rysunku piesi.png
 		points[9][1].isExit = true;
 		points[7][36].which_exit = 2; // 1 na rysunku piesi.png
@@ -584,20 +590,16 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				if(points[x][y].isSidewalk){
 					g.setColor(new Color(0xAAAAAA));
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
-					if (points[x][y].staticFields.get(0) < 100){
-						g.setColor(new Color(0x0000FF));
-						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
-					}
 					if (points[x][y].pedestrians.size() > 0){
 						g.setColor(new Color(0xFF00FF));
 						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 					}
 					switch (points[x][y].pedestrians.size()){
-						case 1 -> g.setColor(new Color(0xFF5500));
-						case 2 -> g.setColor(new Color(0xFF0011));
-						case 3 -> g.setColor(new Color(0xFF0066));
-						case 4 -> g.setColor(new Color(0xFF00AA));
-						case 5 -> g.setColor(new Color(0xFF00FF));
+						case 1 -> g.setColor(new Color(0xFF0000));
+						case 2 -> g.setColor(new Color(0xFFFF00));
+						case 3 -> g.setColor(new Color(0xFF00FF));
+						case 4 -> g.setColor(new Color(0x00FFFF));
+						case 5 -> g.setColor(new Color(0x00FF00));
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
