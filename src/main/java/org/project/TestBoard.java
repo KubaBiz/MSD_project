@@ -140,10 +140,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         moveOnStreet(street8);
         moveOnStreet(crossroads);
 
-        addVehicle(generator1, 30);
-        addVehicle(generator2, 35);
-        addVehicle(generator3, 18);
-        addVehicle(generator4, 33);
+        addVehicle(generator1, 8);
+        addVehicle(generator2, 7);
+        addVehicle(generator3, 9);
+        addVehicle(generator4, 10);
         clearVehicle(57, 21);
         clearVehicle(41,4);
         clearVehicle(24, 20);
@@ -215,22 +215,16 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
     public void intersectionEntrance(Vector2d vector){
 
-        for(int i = 0; i < crossroads.size(); i++){
-            Vector2d tmp = crossroads.get(i);
-            if(blocked[tmp.getX()][tmp.getY()]){
-                points[vector.getX()][vector.getY()].moved = true;
-                break;
-            }
-        }
-
         Vector2d right = new Vector2d(0,0);
 
         if (vector.equals(new Vector2d(41,22))){
             right = new Vector2d(42,20);
-
         }
         else if (vector.equals(new Vector2d(40,19))){
             right = new Vector2d(39,21);
+        }
+        else if (vector.equals(new Vector2d(42,20))){
+            right = new Vector2d(40,19);
         }
         else if (vector.equals(new Vector2d(39,21))){
             right = new Vector2d(41,22);
@@ -240,8 +234,26 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
         if(blocked[right.getX()][right.getY()])
             points[vector.getX()][vector.getY()].setSpeed(0);
+        if(points[vector.getX()][vector.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
+            points[vector.getX()][vector.getY()].setSpeed(1);
+        }
+        else if(points[vector.getX()][vector.getY()].getDestination() == points[right.getX()][right.getY()].getDestination() &&
+                points[vector.getX()][vector.getY()].getDestination() == 0){
+            points[vector.getX()][vector.getY()].setSpeed(1);
+        }
 
+        for(int i = 0; i < crossroads.size(); i++){
+            Vector2d tmp = crossroads.get(i);
+            if(blocked[tmp.getX()][tmp.getY()]){
+                points[vector.getX()][vector.getY()].moved = true;
+                break;
+            }
+        }
 
+        if(points[41][22].getSpeed() == points[42][20].getSpeed() &&  points[40][19].getSpeed() == points[39][21].getSpeed()
+                && points[42][20].getSpeed() == points[40][19].getSpeed() && points[40][19].getSpeed() == 0){
+            points[42][20].setSpeed(1);
+        }
     }
     public TestBoard(int length, int height) {
         initialize(length, height);
