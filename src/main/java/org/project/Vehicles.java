@@ -16,6 +16,7 @@ public class Vehicles {
     private Vector2d position;
     private Vector2d tail[];
     public boolean moved;
+    private int destination;
     // END OF VEHICLE PARAMETERS
 
     // PEDESTRIANS PARAMETERS
@@ -31,16 +32,19 @@ public class Vehicles {
     public boolean isSidewalk;
     public boolean isExit;
     public int which_exit;
+    int[] tab = {11,1,0,1,0,1,0,1,0,1,0}; // 0 skręt w prawo, 1 prosto, 11 w lewo
     // END OF PEDESTRIANS PARAMETERS
 
     public Vehicles(int initLength, int initMaxSpeed, int initAcceleration,
                     int initDeceleration, Vector2d initPosition, Vector2d tailVector){
+        Random r = new Random();
         length = initLength;
         maxSpeed = initMaxSpeed;
         acceleration = initAcceleration;
         position = initPosition;
         deceleration = initDeceleration;
         speed = 0;
+        destination = tab[r.nextInt(tab.length)];
         if (length > 1) {
             tail  = new Vector2d[length-1];
             for(int i = 0; i < length-1; i++){
@@ -52,6 +56,8 @@ public class Vehicles {
         }
     }
 
+    public int getDestination() {return destination;}
+    public void setDestination(){destination = destination/10;}
     public Vector2d getPosition(){
         return position;
     }
@@ -101,14 +107,16 @@ public class Vehicles {
         speed = other.speed;
         position = other.position;
         tail = other.tail;
+        destination = other.destination;
     }
     public void speedReduction(int obstacleDistance){  //przeszkoda jest cos nieruchomego badz z mniejsza predkoscia
-        if(obstacleDistance == 0){
+        if(obstacleDistance < 1){
             speed = 0;
         }
         else {
-            speed = (int) Math.max(1, Math.min(obstacleDistance, Math.round(Math.sqrt(2 * obstacleDistance * deceleration))));
+            speed = (int) Math.max(1, Math.min(obstacleDistance - 1, Math.round(Math.sqrt(2 * obstacleDistance * deceleration))));
             speed = Math.min(speed,maxSpeed);
+
         }
     }
 
@@ -395,6 +403,7 @@ public class Vehicles {
                 for (Vehicles neighbor : neighbors) {
                     if (neighbor.staticFields.get(5) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
                         min = neighbor.staticFields.get(5);
+                        possible.clear();
                         possible.clear();
                         possible.add(neighbor);
                     } else if (neighbor.staticFields.get(5) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {

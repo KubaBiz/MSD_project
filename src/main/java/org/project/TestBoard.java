@@ -15,6 +15,9 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
     private Vehicles[][] points;
     private List<Vector2d>[][] directions;
+    private List<Vector2d> lowerMaxSpeedVectors = new ArrayList<>();
+    private List<Vector2d> increaseMaxSpeedVectors = new ArrayList<>();
+
     private List<Vector2d> crossroads = new ArrayList<>();
     private List<Vector2d> street1 = new ArrayList<>();
 
@@ -26,7 +29,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     private List<Vector2d> street7 = new ArrayList<>();
     private List<Vector2d> street8 = new ArrayList<>();
     private Boolean[][] blocked;
-    Generator generator1;;
+    Generator generator1;
+    Generator generator2;
+    Generator generator3;
+    Generator generator4;
     private int size = 12;
     public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
     public int editType = 0;
@@ -36,9 +42,22 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     public int carInFront(int x, int y, int maxSpeed){
         int sum = 0;
         int i = 0;
-        while(i < maxSpeed && directions[x][y].size() > 0){
-            int newX = directions[x][y].get(0).getX();
-            int newY = directions[x][y].get(0).getY();
+        int iter;
+        int newX = x;
+        int newY = y;
+        while(i < maxSpeed+1 && directions[x][y].size() > 0){
+            if(directions[newX][newY].size() > 1){
+                iter = points[x][y].getDestination() % 10;
+
+            }
+            else{
+                iter = 0;
+
+            }
+            newX = directions[x][y].get(iter).getX();
+            newY = directions[x][y].get(iter).getY();
+
+
             if(!blocked[newX][newY]){
                 sum++;
                 x = newX;
@@ -53,9 +72,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     public void moveOnStreet(List<Vector2d> streetName){
         for(int i = 0; i < streetName.size(); i ++){
             Vector2d vector = streetName.get(i);
-            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved)
+            if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
+            && points[vector.getX()][vector.getY()].getSpeed() > 0)
             {
-//                setSpeed(vector.getX(), vector.getY());
+                speedChanges(vector.getX(), vector.getY());
                 moveVehicles(vector.getX(), vector.getY());}
         }
     }
@@ -67,7 +87,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
         }
     }
-    public void setSpeed(int x, int y){
+    public void speedChanges(int x, int y){
         int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
         points[x][y].speedBoost();
         points[x][y].speedReduction(obstacle);
@@ -79,10 +99,36 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             for ( int y = 0; y < points[x].length; ++y){
                 if(points[x][y].getLength() > 0 ){
                     points[x][y].moved = false;
-                    setSpeed(x,y);
+                    speedChanges(x,y);
                 }
             }
         }
+
+        for(int i = 0; i < lowerMaxSpeedVectors.size(); i++){
+            Vector2d vector = lowerMaxSpeedVectors.get(i);
+            if(points[vector.getX()][vector.getY()].getLength() > 1){
+                points[vector.getX()][vector.getY()].setMaxSpeed(1);
+            }
+        }
+
+        for(int i = 0; i < increaseMaxSpeedVectors.size(); i++){
+            Vector2d vector = increaseMaxSpeedVectors.get(i);
+            switch (points[vector.getX()][vector.getY()].getLength()) {
+                case 2:
+                    points[vector.getX()][vector.getY()].setMaxSpeed(2);
+                    break;
+                case 3:
+                    points[vector.getX()][vector.getY()].setMaxSpeed(2);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        intersectionEntrance(new Vector2d(41,22));
+        intersectionEntrance(new Vector2d(42,20));
+        intersectionEntrance(new Vector2d(40,19));
+        intersectionEntrance(new Vector2d(39,21));
 
         moveOnStreet(street1);
         moveOnStreet(street2);
@@ -94,7 +140,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         moveOnStreet(street8);
         moveOnStreet(crossroads);
 
-        addVehicle(generator1, 15);
+        addVehicle(generator1, 30);
+        addVehicle(generator2, 35);
+        addVehicle(generator3, 18);
+        addVehicle(generator4, 33);
         clearVehicle(57, 21);
         clearVehicle(41,4);
         clearVehicle(24, 20);
@@ -114,15 +163,23 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     public void moveVehicles(int x, int y) {
         int speed = points[x][y].getSpeed();
         int i = 0;
+        int iter;
         Vector2d vector = new Vector2d(x, y);
-        Vector2d startVector = new Vector2d(x, y);
 
         setBlocked(x,y,false);
 
         while (i < speed && directions[vector.getX()][vector.getY()].size() > 0) {
+            if(directions[vector.getX()][vector.getY()].size() > 1){
+                iter = points[x][y].getDestination() % 10;
+                points[x][y].setDestination();
+                System.out.println(points[x][y].getDestination());
+
+            }
+            else{
+                iter = 0;
+            }
             points[x][y].moveTail(vector);
-            Random r = new Random();
-            vector = directions[vector.getX()][vector.getY()].get(r.nextInt(directions[vector.getX()][vector.getY()].size()));
+            vector = directions[vector.getX()][vector.getY()].get(iter);
 
             i++;
         }
@@ -142,8 +199,8 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
     public void clearVehicle(int x,int y){
         if(points[x][y].getLength() > 1){
-            for(int i = 0 ; i < points[x][y].getTail().length-1; i ++){
-                blocked[points[x][y].getTail()[i].getY()][points[x][y].getTail()[i].getY()] = false;
+            for(int i = 0 ; i < points[x][y].getTail().length; i ++){
+                blocked[points[x][y].getTail()[i].getX()][points[x][y].getTail()[i].getY()] = false;
             }
         }
         points[x][y].setLength(0);
@@ -154,6 +211,37 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         points[x][y].setPosition(new Vector2d(-1,-1));
         points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         blocked[x][y] = false;
+    }
+
+    public void intersectionEntrance(Vector2d vector){
+
+        for(int i = 0; i < crossroads.size(); i++){
+            Vector2d tmp = crossroads.get(i);
+            if(blocked[tmp.getX()][tmp.getY()]){
+                points[vector.getX()][vector.getY()].moved = true;
+                break;
+            }
+        }
+
+        Vector2d right = new Vector2d(0,0);
+
+        if (vector.equals(new Vector2d(41,22))){
+            right = new Vector2d(42,20);
+
+        }
+        else if (vector.equals(new Vector2d(40,19))){
+            right = new Vector2d(39,21);
+        }
+        else if (vector.equals(new Vector2d(39,21))){
+            right = new Vector2d(41,22);
+            if(blocked[42][20] && points[vector.getX()][vector.getY()].getDestination() == 11)
+                points[vector.getX()][vector.getY()].setSpeed(0);
+        }
+
+        if(blocked[right.getX()][right.getY()])
+            points[vector.getX()][vector.getY()].setSpeed(0);
+
+
     }
     public TestBoard(int length, int height) {
         initialize(length, height);
@@ -207,7 +295,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         directions[40][21].add(new Vector2d(40,22));
         directions[40][21].add(vector1);
 
-        generator1 = new Generator(new Vector2d(57,20), new Vector2d(-1,0));
+        generator1 = new Generator(new Vector2d(41,37), new Vector2d(0,-1));
+        generator2 = new Generator(new Vector2d(57,20), new Vector2d(-1,0));
+        generator3 = new Generator(new Vector2d(40,4), new Vector2d(-1,0));
+        generator4 = new Generator(new Vector2d(24,21), new Vector2d(-1,0));
         Vector2d tmp = new Vector2d(57,20);
 
         while(directions[tmp.getX()][tmp.getY()].size()>0){
@@ -220,7 +311,30 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         crossroads.add(vector2);
         crossroads.add(vector3);
         crossroads.add(vector4);
-        crossroads.add(new Vector2d(42,20));
+        street3.add(new Vector2d(42,20));
+        street1.add(new Vector2d(41,22));
+        street5.add(new Vector2d(40,19));
+        street7.add(new Vector2d(39,21));
+
+        lowerMaxSpeedVectors.add(new Vector2d(41, 26));
+        lowerMaxSpeedVectors.add(new Vector2d(41, 25));
+        lowerMaxSpeedVectors.add(new Vector2d(41, 27));
+        lowerMaxSpeedVectors.add(new Vector2d(46, 20));
+        lowerMaxSpeedVectors.add(new Vector2d(45, 20));
+        lowerMaxSpeedVectors.add(new Vector2d(47, 20));
+        lowerMaxSpeedVectors.add(new Vector2d(40, 15));
+        lowerMaxSpeedVectors.add(new Vector2d(40, 16));
+        lowerMaxSpeedVectors.add(new Vector2d(40, 14));
+        lowerMaxSpeedVectors.add(new Vector2d(35, 21));
+        lowerMaxSpeedVectors.add(new Vector2d(36, 21));
+        lowerMaxSpeedVectors.add(new Vector2d(34, 21));
+
+        increaseMaxSpeedVectors.add(new Vector2d(42, 21));
+        increaseMaxSpeedVectors.add(new Vector2d(41,19));
+        increaseMaxSpeedVectors.add(new Vector2d(39,20));
+        increaseMaxSpeedVectors.add(new Vector2d(40,22));
+
+
     }
 
 
@@ -241,6 +355,12 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         drawNetting(g, size);
     }
 
+    private void drawRoads(Graphics g, int gridSpace,List<Vector2d> street){
+        for(int i = 0; i < street.size(); i++){
+            Vector2d vector = street.get(i);
+            g.fillRect((vector.getX() * size) + 1, (vector.getY() * size) + 1, (size - 1), (size - 1));
+        }
+    }
     private void drawNetting(Graphics g, int gridSpace) {
         Insets insets = getInsets();
         int firstX = insets.left;
@@ -259,6 +379,17 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             g.drawLine(firstX, y, lastX, y);
             y += gridSpace;
         }
+
+        drawRoads(g,gridSpace,street1);
+        drawRoads(g,gridSpace,street2);
+        drawRoads(g,gridSpace,street3);
+        drawRoads(g,gridSpace,street4);
+        drawRoads(g,gridSpace,street5);
+        drawRoads(g,gridSpace,street6);
+        drawRoads(g,gridSpace,street7);
+        drawRoads(g,gridSpace,street8);
+        drawRoads(g,gridSpace,crossroads);
+
 
         for (x = 0; x < points.length; ++x) {
             for (y = 0; y < points[x].length; ++y) {
