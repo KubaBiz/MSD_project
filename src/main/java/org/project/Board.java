@@ -350,12 +350,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		moveOnStreet(leftCrossroads);
 		moveOnStreet(rightCrossroads);
 
-		addVehicle(generator1, 15);
-		addVehicle(generator5, 17);
-		addVehicle(generator10, 19);
-		addVehicle(generator4, 18);
-		addVehicle(generator14, 33);
-		addVehicle(generator11, 19);
+		addVehicle(generator1, 11);
+		addVehicle(generator5, 13);
+		addVehicle(generator10, 15);
+		addVehicle(generator4, 14);
+		addVehicle(generator14, 29);
+		addVehicle(generator11, 15);
 
 		clearVehicle(10, 35);
 		clearVehicle(69,35);
@@ -902,7 +902,16 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				if (type != 0) {
 					switch (points[x][y].getLength()) {
 						case 1 -> g.setColor(new Color(0xFFEA00));
-						case 2 -> g.setColor(new Color(0x00ff00));
+						case 2 -> {switch (points[x][y].color){
+							case 0 -> g.setColor(new Color(0xFFA40EF6, true));
+							case 1 -> g.setColor(new Color(0xA45F0E));
+							case 2 -> g.setColor(new Color(0x7BFF00));
+							case 3 -> g.setColor(new Color(0x03D7B7));
+							case 4 -> g.setColor(new Color(0xFFA40EF6, true));
+							case 5 -> g.setColor(new Color(0x6B5D0A));
+							case 6 -> g.setColor(new Color(0x980F6D));
+							case 7 -> g.setColor(new Color(0xFF659A));
+						}}
 						case 3 -> g.setColor(new Color(0xff0000));
 						case 5 -> g.setColor(new Color(0xff00ff));
 						case 8 -> g.setColor(new Color(0x6F7DA1));

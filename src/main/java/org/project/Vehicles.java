@@ -9,6 +9,7 @@ import static java.lang.Math.max;
 public class Vehicles {
     // VEHICLE PARAMETERS
     private int length;
+    Random random = new Random();    int color;
     private int maxSpeed;
     private int acceleration;
     private int deceleration;
@@ -45,6 +46,7 @@ public class Vehicles {
         deceleration = initDeceleration;
         speed = 0;
         destination = tab[r.nextInt(tab.length)];
+        color = r.nextInt(8);
         if (length > 1) {
             tail  = new Vector2d[length-1];
             for(int i = 0; i < length-1; i++){
@@ -116,6 +118,7 @@ public class Vehicles {
         position = other.position;
         tail = other.tail;
         destination = other.destination;
+        color = other.color;
     }
     public void speedReduction(int obstacleDistance){  //przeszkoda jest cos nieruchomego badz z mniejsza predkoscia
         if(obstacleDistance < 1){
