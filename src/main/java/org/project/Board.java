@@ -19,6 +19,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	private List<Vector2d>[][] directions;
 	private Boolean[][] blocked;
 	Generator generator1;
+	Generator generator2;
 	Generator generator3;
 	Generator generator10;
 	Generator generator11;
@@ -619,36 +620,55 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	}
     // 34 x 76
+//	public void mouseClicked(MouseEvent e) {
+//		int x = e.getX() / size;
+//		int y = e.getY() / size;
+//		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
+//			if(editType<4) {
+//				points[x][y].setLength(editType);
+//				this.repaint();
+//			}
+//			if(editType == 5 && points[x][y].getLength() != editType){
+//				String localization = System.getProperty("user.dir");
+//				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
+//				String fileName = localization + str1;
+//				try {
+//					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+//
+//					writer.write(Integer.toString(x) + " " + Integer.toString(y));
+//					writer.newLine();
+//
+//					writer.close();
+//
+//					System.out.println("Numbers have been added to the file.");
+//				} catch (IOException exception) {
+//					System.out.println("An error occurred: " + exception.getMessage());
+//				}
+//				points[x][y].setLength(editType);
+//				this.repaint();
+//			}
+//		}
+//	}
+	public static void saveTextToFile(String text, String filePath) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+			writer.write(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / size;
 		int y = e.getY() / size;
 		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
 			if(editType<4) {
 				points[x][y].setLength(editType);
+				System.out.println(String.valueOf(x) + " " + String.valueOf(y));
 				this.repaint();
 			}
-			if(editType == 5 && points[x][y].getLength() != editType){
-				String localization = System.getProperty("user.dir");
-				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
-				String fileName = localization + str1;
-				try {
-					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
 
-					writer.write(Integer.toString(x) + " " + Integer.toString(y));
-					writer.newLine();
-
-					writer.close();
-
-					System.out.println("Numbers have been added to the file.");
-				} catch (IOException exception) {
-					System.out.println("An error occurred: " + exception.getMessage());
-				}
-				points[x][y].setLength(editType);
-				this.repaint();
-			}
 		}
 	}
-
 	public void componentResized(ComponentEvent e) {
 		int dlugosc = (this.getWidth() / size) + 1;
 		int wysokosc = (this.getHeight() / size) + 1;

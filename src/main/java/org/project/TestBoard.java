@@ -140,10 +140,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         moveOnStreet(street8);
         moveOnStreet(crossroads);
 
-        addVehicle(generator1, 8);
-        addVehicle(generator2, 7);
-        addVehicle(generator3, 9);
-        addVehicle(generator4, 10);
+        addVehicle(generator1, 15);
+        addVehicle(generator2, 17);
+        addVehicle(generator3, 19);
+        addVehicle(generator4, 23);
         clearVehicle(57, 21);
         clearVehicle(41,4);
         clearVehicle(24, 20);
