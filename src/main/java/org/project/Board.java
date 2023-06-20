@@ -141,7 +141,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			if(directions[vector.getX()][vector.getY()].size() > 1){
 				iter = points[x][y].getDestination() % 10;
 				points[x][y].setDestination();
-				System.out.println(points[x][y].getDestination());
 
 			}
 			else{
@@ -383,6 +382,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[x][y].setMaxSpeed(0);
 		points[x][y].setAcceleration(0);
 		points[x][y].setDeceleration(0);
+		points[x][y].addNewDestination(0);
 		points[x][y].setPosition(new Vector2d(-1,-1));
 		points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		blocked[x][y] = false;

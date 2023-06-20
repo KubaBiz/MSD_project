@@ -56,8 +56,14 @@ public class Vehicles {
         }
     }
 
-    public void addNewDestination(){Random r = new Random();
-        destination = tab[r.nextInt(tab.length)];}
+    public void addNewDestination(int... newDest) {
+        Random r = new Random();
+        if (newDest.length > 0) {
+            destination = newDest[0];
+        } else {
+            destination = tab[r.nextInt(tab.length)];
+        }
+    }
     public int getDestination() {return destination;}
     public void setDestination(){destination = destination/10;}
     public Vector2d getPosition(){
