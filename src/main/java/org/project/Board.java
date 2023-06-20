@@ -19,17 +19,34 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	private List<Vector2d>[][] directions;
 	private Boolean[][] blocked;
 	Generator generator1;
-	Generator generator2;
-	Generator generator3;
+	Generator generator4;
+	Generator generator5;
+
 	Generator generator10;
 	Generator generator11;
+
 	Generator generator14;
 	PedestrianGenerator generatorek;
-	private List<Vector2d> moveDownList = new ArrayList<>();
-	private List<Vector2d> moveUpList = new ArrayList<>();
-	private List<Vector2d> moveStreet10 = new ArrayList<>();
-	private List<Vector2d> moveStreet11 = new ArrayList<>();
-	private List<Vector2d> moveStreet14 = new ArrayList<>();
+	private List<Vector2d> street1 = new ArrayList<>();
+	private List<Vector2d> street2 = new ArrayList<>();
+	private List<Vector2d> street3 = new ArrayList<>();
+	private List<Vector2d> street4 = new ArrayList<>();
+	private List<Vector2d> street5 = new ArrayList<>();
+	private List<Vector2d> street6 = new ArrayList<>();
+	private List<Vector2d> street7 = new ArrayList<>();
+	private List<Vector2d> street8 = new ArrayList<>();
+	private List<Vector2d> street9 = new ArrayList<>();
+	private List<Vector2d> street10 = new ArrayList<>();
+	private List<Vector2d> street11 = new ArrayList<>();
+	private List<Vector2d> street12 = new ArrayList<>();
+	private List<Vector2d> street13 = new ArrayList<>();
+	private List<Vector2d> street14 = new ArrayList<>();
+	private List<Vector2d> leftCrossroads = new ArrayList<>();
+	private List<Vector2d> rightCrossroads = new ArrayList<>();
+	private List<Vector2d> reduceMaxSpeedVectors = new ArrayList<>();
+	private List<Vector2d> IncreaseMaxSpeedPoints = new ArrayList<>();
+	private int time = 0;
+
 	//private int length;
 	//private int height;
 	//private Point[][] points;
@@ -49,25 +66,194 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		setOpaque(true);
 	}
 
-	public void moveVehicles(int x, int y, Vector2d vector){
-		points[vector.getX()][vector.getY()] = points[x][y];
-		points[x][y].setPosition(vector);
-		blocked[vector.getX()][vector.getY()] = true;
-		points[vector.getX()][vector.getY()].moved = true;
-		points[x][y] = new Vehicles(0,0,0,0,
-				new Vector2d(-1,-1),new Vector2d(0,0));
-		blocked[x][y] = false;
+	public int carInFront(int x, int y, int maxSpeed){
+		int sum = 0;
+		int i = 0;
+		int iter;
+		int newX = x;
+		int newY = y;
+		while(i < maxSpeed+1 && directions[x][y].size() > 0){
+			if(directions[newX][newY].size() > 1){
+				iter = points[x][y].getDestination() % 10;
+
+			}
+			else{
+				iter = 0;
+
+			}
+			newX = directions[x][y].get(iter).getX();
+			newY = directions[x][y].get(iter).getY();
+
+
+			if(!blocked[newX][newY]){
+				sum++;
+				x = newX;
+				y = newY;
+				i++;
+			}
+			else return sum;
+		}
+		return sum;
 	}
 
-	public void moveCarTemp(int x, int y){
-		Vector2d vector;
+	public void moveOnStreet(List<Vector2d> streetName){
+		for(int i = 0; i < streetName.size(); i ++){
+			Vector2d vector = streetName.get(i);
+			if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
+					&& points[vector.getX()][vector.getY()].getSpeed() > 0)
+			{
+				speedChanges(vector.getX(), vector.getY());
+				moveVehicles(vector.getX(), vector.getY());}
+		}
+	}
 
-		if(directions[x][y].size() > 0){
-			vector = directions[x][y].get(0);
-			if(directions[vector.getX()][vector.getY()].size() > 0){
-				vector = directions[vector.getX()][vector.getY()].get(0);
-				moveVehicles(x,y,vector);
+
+	public void addVehicle(Generator generator, int frequency){
+		if( time % frequency == 0){
+			Vehicles vehicle = generator.generateVehicle();
+			points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
+			blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
+		}
+	}
+	public void speedChanges(int x, int y){
+		int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
+		points[x][y].speedBoost();
+		points[x][y].speedReduction(obstacle);
+
+	}
+
+	public void setBlocked(int x,int y, boolean value){
+		if(points[x][y].getLength() > 1){
+			for (int j = 0; j < points[x][y].getTail().length; j++){
+				blocked[points[x][y].getTail()[j].getX()][points[x][y].getTail()[j].getY()] = value;
 			}
+		}
+	}
+	public void moveVehicles(int x, int y) {
+		int speed = points[x][y].getSpeed();
+		int i = 0;
+		int iter;
+		Vector2d vector = new Vector2d(x, y);
+
+		setBlocked(x,y,false);
+
+		while (i < speed && directions[vector.getX()][vector.getY()].size() > 0) {
+			if(directions[vector.getX()][vector.getY()].size() > 1){
+				iter = points[x][y].getDestination() % 10;
+				points[x][y].setDestination();
+				System.out.println(points[x][y].getDestination());
+
+			}
+			else{
+				iter = 0;
+			}
+			points[x][y].moveTail(vector);
+			vector = directions[vector.getX()][vector.getY()].get(iter);
+
+			i++;
+		}
+
+		points[vector.getX()][vector.getY()].copyVehicleToAnotherTile(points[x][y]);
+		blocked[vector.getX()][vector.getY()] = true;
+		points[vector.getX()][vector.getY()].moved = true;
+		points[vector.getX()][vector.getY()].setPosition(vector);
+
+		clearVehicle(x, y);
+		setBlocked(vector.getX(),vector.getY(),true);
+
+	}
+
+	public void enteringTheLeftCrossroads(Vector2d vector){
+
+		Vector2d right = new Vector2d(0,0);
+
+		if (vector.equals(new Vector2d(11,19))){
+			right = new Vector2d(12,17);
+		}
+		else if (vector.equals(new Vector2d(12,17))){
+			right = new Vector2d(10,16);
+		}
+		else if (vector.equals(new Vector2d(10,16))){
+			right = new Vector2d(9,18);
+		}
+		else if (vector.equals(new Vector2d(9,18))){
+			right = new Vector2d(11,19);
+			if(blocked[12][17] && points[vector.getX()][vector.getY()].getDestination() == 11)
+				points[vector.getX()][vector.getY()].setSpeed(0);
+		}
+
+		if(blocked[right.getX()][right.getY()])
+			points[vector.getX()][vector.getY()].setSpeed(0);
+		if(points[vector.getX()][vector.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
+			points[vector.getX()][vector.getY()].setSpeed(1);
+		}
+		else if(points[vector.getX()][vector.getY()].getDestination() == points[right.getX()][right.getY()].getDestination() &&
+				points[vector.getX()][vector.getY()].getDestination() == 0){
+			points[vector.getX()][vector.getY()].setSpeed(1);
+		}
+
+		for(int i = 0; i < leftCrossroads.size(); i++){
+			Vector2d tmp = leftCrossroads.get(i);
+			if(blocked[tmp.getX()][tmp.getY()]){
+				points[vector.getX()][vector.getY()].moved = true;
+				break;
+			}
+		}
+
+		if(vector.equals(new Vector2d(10,16)) && points[10][16].getDestination() == 11 && points[11][19].getDestination() == 11){
+			points[10][16].setSpeed(0);
+		}
+
+		if(points[9][18].getSpeed() == points[11][19].getSpeed() &&  points[12][17].getSpeed() == points[10][16].getSpeed()
+				&& points[9][18].getSpeed() == points[12][17].getSpeed() && points[12][17].getSpeed() == 0){
+			points[12][17].setSpeed(1);
+		}
+	}
+
+	public void enteringTheRightCrossroads(Vector2d vector){
+
+		Vector2d right = new Vector2d(0,0);
+
+		if (vector.equals(new Vector2d(68,18))){
+			right = new Vector2d(70,19);
+		}
+		else if (vector.equals(new Vector2d(70,19))){
+			right = new Vector2d(71,17);
+		}
+		else if (vector.equals(new Vector2d(69,16))){
+			right = new Vector2d(68,18);
+		}
+		else if (vector.equals(new Vector2d(71,17))){
+			right = new Vector2d(69,16);
+			if(blocked[68][18] && points[vector.getX()][vector.getY()].getDestination() == 11)
+				points[vector.getX()][vector.getY()].setSpeed(0);
+		}
+
+		if(blocked[right.getX()][right.getY()])
+			points[vector.getX()][vector.getY()].setSpeed(0);
+		if(points[vector.getX()][vector.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
+			points[vector.getX()][vector.getY()].setSpeed(1);
+		}
+		else if(points[vector.getX()][vector.getY()].getDestination() == points[right.getX()][right.getY()].getDestination() &&
+				points[vector.getX()][vector.getY()].getDestination() == 0){
+			points[vector.getX()][vector.getY()].setSpeed(1);
+		}
+
+		for(int i = 0; i < rightCrossroads.size(); i++){
+			Vector2d tmp = rightCrossroads.get(i);
+			if(blocked[tmp.getX()][tmp.getY()]){
+				points[vector.getX()][vector.getY()].moved = true;
+				break;
+			}
+		}
+
+		if(vector.equals(new Vector2d(70,19)) && points[70][19].getDestination() == 11 && points[69][16].getDestination() == 11){
+			points[70][19].setSpeed(0);
+		}
+
+		if(points[68][18].getSpeed() == points[70][19].getSpeed() &&  points[71][17].getSpeed() == points[69][16].getSpeed()
+				&& points[68][18].getSpeed() == points[71][17].getSpeed() && points[71][17].getSpeed() == 0){
+			points[68][18].setSpeed(1);
 		}
 	}
 
@@ -92,90 +278,104 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		for (int x = 1; x < points.length-1; ++x) {
 			for (int y = 1; y < points[x].length - 1; ++y) {
-				if (points[x][y].getLength() == 0 && points[x][y].pedestrians.size() == 0){
+				if (points[x][y].getLength() == 0 && points[x][y].pedestrians.size() == 0){     //dokładnie ta linijka psuje
 					blocked[x][y] = false;
 				}
 			}
 		}
 		//
+
+		// ruch aut
 		for (int x = 0; x < points.length; ++x) {
-			for ( int y = 0; y < points[x].length; ++y){
-				if(blocked[x][y]) points[x][y].moved = false;
+			for (int y = 0; y < points[x].length; ++y) {
+				if(points[x][y].getLength() > 1 && points[x][y].getLength() <4 ){
+					setBlocked(x,y,true);
+				}
 			}
 		}
 
-		// ruch na dół
-		int start = moveDownList.size();
-		for (int i = start - 1; i >= 0 ; --i) {
-			int x = moveDownList.get(i).getX();
-			int y = moveDownList.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
+		for (int x = 0; x < points.length; ++x) {
+			for ( int y = 0; y < points[x].length; ++y){
+				if(points[x][y].getLength() > 0 ){
+					points[x][y].moved = false;
+					speedChanges(x,y);
+				}
+			}
 		}
 
-		// ruch na góre
-		start = moveUpList.size();
-		for (int i = start - 1; i >= 0 ; --i) {
-			int x = moveUpList.get(i).getX();
-			int y = moveUpList.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
+		for(int i = 0; i < reduceMaxSpeedVectors.size(); i++){
+			Vector2d vector = reduceMaxSpeedVectors.get(i);
+			if(points[vector.getX()][vector.getY()].getLength() > 1){
+				points[vector.getX()][vector.getY()].setMaxSpeed(1);
+			}
 		}
 
-		//temporary, jak chcesz to do zmiany?
-		start = moveStreet10.size();
-		for (int i = start - 1; i >= 0 ; --i) {
-			int x = moveStreet10.get(i).getX();
-			int y = moveStreet10.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
-		}
-		start = moveStreet11.size();
-		for (int i = start - 1; i >= 0 ; --i) {
-			int x = moveStreet11.get(i).getX();
-			int y = moveStreet11.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
-		}
-		start = moveStreet14.size();
-		for (int i = start - 1; i >= 0 ; --i) {
-			int x = moveStreet14.get(i).getX();
-			int y = moveStreet14.get(i).getY();
-			if(points[x][y].getLength() > 0 && !points[x][y].moved) moveCarTemp(x,y);
+		for(int i = 0; i < IncreaseMaxSpeedPoints.size(); i++){
+			Vector2d vector = IncreaseMaxSpeedPoints.get(i);
+			switch (points[vector.getX()][vector.getY()].getLength()) {
+				case 2:
+					points[vector.getX()][vector.getY()].setMaxSpeed(2);
+					break;
+				case 3:
+					points[vector.getX()][vector.getY()].setMaxSpeed(2);
+					break;
+				default:
+					break;
+			}
 		}
 
-		if(!blocked[generator10.getPosition().getX()][generator10.getPosition().getY()]){
-			Vehicles vehicle = generator10.generateVehicle();
-			points[generator10.getPosition().getX()][generator10.getPosition().getY()] = vehicle;
-			blocked[generator10.getPosition().getX()][generator10.getPosition().getY()] = true;
-		}
-		if(!blocked[generator11.getPosition().getX()][generator11.getPosition().getY()]){
-			Vehicles vehicle = generator11.generateVehicle();
-			points[generator11.getPosition().getX()][generator11.getPosition().getY()] = vehicle;
-			blocked[generator11.getPosition().getX()][generator11.getPosition().getY()] = true;
-		}
-		if(!blocked[generator14.getPosition().getX()][generator14.getPosition().getY()]){
-			Vehicles vehicle = generator14.generateVehicle();
-			points[generator14.getPosition().getX()][generator14.getPosition().getY()] = vehicle;
-			blocked[generator14.getPosition().getX()][generator14.getPosition().getY()] = true;
-		}
-		//
+		enteringTheLeftCrossroads(new Vector2d(9, 18));
+		enteringTheLeftCrossroads(new Vector2d(11, 19));
+		enteringTheLeftCrossroads(new Vector2d(12, 17));
+		enteringTheLeftCrossroads(new Vector2d(10, 16));
 
-		if(!blocked[generator1.getPosition().getX()][generator1.getPosition().getY()]){
-			Vehicles vehicle = generator1.generateVehicle();
-			points[generator1.getPosition().getX()][generator1.getPosition().getY()] = vehicle;
-			blocked[generator1.getPosition().getX()][generator1.getPosition().getY()] = true;
-		}
-		if(!blocked[generator3.getPosition().getX()][generator3.getPosition().getY()]){
-			Vehicles vehicle = generator3.generateVehicle();
-			points[generator3.getPosition().getX()][generator3.getPosition().getY()] = vehicle;
-			blocked[generator3.getPosition().getX()][generator3.getPosition().getY()] = true;
-		}
+		enteringTheRightCrossroads(new Vector2d(68, 18));
+		enteringTheRightCrossroads(new Vector2d(70, 19));
+		enteringTheRightCrossroads(new Vector2d(71, 17));
+		enteringTheRightCrossroads(new Vector2d(69, 16));
 
-		generatorek.generate();
-		this.repaint();
+		moveOnStreet(street1);
+		moveOnStreet(street2);
+		moveOnStreet(street3);
+		moveOnStreet(street4);
+		moveOnStreet(street5);
+		moveOnStreet(street6);
+		moveOnStreet(street7);
+		moveOnStreet(street8);
+		moveOnStreet(street9);
+		moveOnStreet(street10);
+		moveOnStreet(street11);
+		moveOnStreet(street12);
+		moveOnStreet(street13);
+		moveOnStreet(street14);
+		moveOnStreet(leftCrossroads);
+		moveOnStreet(rightCrossroads);
+
+		addVehicle(generator1, 15);
+		addVehicle(generator5, 17);
+		addVehicle(generator10, 19);
+		addVehicle(generator4, 18);
+		addVehicle(generator14, 33);
+		addVehicle(generator11, 19);
+
+		clearVehicle(10, 35);
+		clearVehicle(69,35);
+		clearVehicle(75, 18);
+		clearVehicle(70, 2);
+		clearVehicle(11, 2);
+		clearVehicle(2, 2);
+
+		points[68][18].addNewDestination();
+		points[12][17].addNewDestination();
+
+		time++;
+		repaint();
 	}
 
 	public void clearVehicle(int x,int y){
 		if(points[x][y].getLength() > 1){
-			for(int i = 0 ; i < points[x][y].getTail().length-1; i ++){
-				blocked[points[x][y].getTail()[i].getY()][points[x][y].getTail()[i].getY()] = false;
+			for(int i = 0 ; i < points[x][y].getTail().length; i ++){
+				blocked[points[x][y].getTail()[i].getX()][points[x][y].getTail()[i].getY()] = false;
 			}
 		}
 		points[x][y].setLength(0);
@@ -211,11 +411,14 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points = new Vehicles[length][height];
 		directions = new List[length][height];
 		blocked = new Boolean[length][height];
-		generator1 = new Generator(new Vector2d(2,3), new Vector2d(0,-1));
-		generator3 = new Generator(new Vector2d(11,35), new Vector2d(0,1));
-		generator10 = new Generator(new Vector2d(70, 35), new Vector2d(0 ,1));
-		generator11 = new Generator(new Vector2d(69, 2), new Vector2d(0 ,1));
-		generator14 = new Generator(new Vector2d(75, 17), new Vector2d(0 ,1));
+
+		generator1 = new Generator(new Vector2d(2,3),new Vector2d(-1,0));
+		generator4 = new Generator(new Vector2d(11,35),new Vector2d(-1,0));
+		generator5 = new Generator(new Vector2d(10,2),new Vector2d(-1,0));
+		generator10 = new Generator(new Vector2d(70, 35),new Vector2d(-1,0));
+		generator11 = new Generator(new Vector2d(69, 2),new Vector2d(-1,0));
+		generator14 = new Generator(new Vector2d(75, 17),new Vector2d(-1,0));
+
 		for (int x = 0; x < points.length; ++x)
 			for (int y = 0; y < points[x].length; ++y){
 				points[x][y] = new Vehicles(0,0,0,0,
@@ -223,6 +426,63 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				directions[x][y] = new ArrayList<>();
 				blocked[x][y] = false;
 			}
+
+		directions[10][18].add(new Vector2d(10,19));
+		directions[10][18].add(new Vector2d(11,18));
+
+		directions[11][18].add(new Vector2d(12,18));
+		directions[11][18].add(new Vector2d(11,17));
+
+		directions[11][17].add(new Vector2d(11,16));
+		directions[11][17].add(new Vector2d(10,17));
+
+		directions[10][17].add(new Vector2d(9,17));
+		directions[10][17].add(new Vector2d(10,18));
+
+		directions[69][18].add(new Vector2d(69,19));
+		directions[69][18].add(new Vector2d(70,18));
+
+		directions[70][18].add(new Vector2d(71,18));
+		directions[70][18].add(new Vector2d(70,17));
+
+		directions[70][17].add(new Vector2d(70,16));
+		directions[70][17].add(new Vector2d(69,17));
+
+		directions[69][17].add(new Vector2d(68,17));
+		directions[69][17].add(new Vector2d(69,18));
+
+		leftCrossroads.add(new Vector2d(10,18));
+		leftCrossroads.add(new Vector2d(11,18));
+		leftCrossroads.add(new Vector2d(11,17));
+		leftCrossroads.add(new Vector2d(10,17));
+		rightCrossroads.add(new Vector2d(69,18));
+		rightCrossroads.add(new Vector2d(70,18));
+		rightCrossroads.add(new Vector2d(70,17));
+		rightCrossroads.add(new Vector2d(69,17));
+
+		//VEHICLES
+		String localization = System.getProperty("user.dir");
+		readFile(localization + "\\src\\main\\java\\org\\project\\street1.txt", street1);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street2.txt", street2);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street3.txt", street3);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street4.txt", street4);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street5.txt", street5);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street6.txt", street6);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street7.txt", street7);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street8.txt", street8);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street9.txt", street9);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street10.txt", street10);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street11.txt", street11);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street12.txt", street12);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street13.txt", street13);
+		readFile(localization + "\\src\\main\\java\\org\\project\\street14.txt", street14);
+		readFileWithoutDirections(localization + "\\src\\main\\java\\org\\project\\ReduceMaxSpeedPoints.txt",
+				reduceMaxSpeedVectors);
+		readFileWithoutDirections(localization + "\\src\\main\\java\\org\\project\\IncreaseMaxSpeedPoints.txt",
+				IncreaseMaxSpeedPoints);
+
+
+
 		//PEDESTRIANS
 		for (int x = 1; x < points.length-1; ++x) {
 			for (int y = 1; y < points[x].length-1; ++y) {
@@ -241,7 +501,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			}
 		}
 		//
-		String localization = System.getProperty("user.dir");
+
 		String str1 = "\\src\\main\\java\\org\\project\\street1.txt";
 		String str2 = "";
 		String str3 = "\\src\\main\\java\\org\\project\\street3.txt";
@@ -278,12 +538,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		String street14 = localization + str14;
 
 
-		readFile(street1, moveUpList);
-		readFile(street3, moveDownList);
-		readFile(street10, moveStreet10);
-		readFile(street11, moveStreet11);
-		readFile(street14, moveStreet14);
-
 		drawFromFile(border, 9, 0);
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
@@ -305,12 +559,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[76][19].isExit = true;
 		points[73][36].which_exit = 8; // 7 na rysunku piesi.png
 		points[73][36].isExit = true;
-		for (int i = 0; i < 5; i++) {
-			points[9][9].pedestrians.add(new Pedestrian(i%2 + 2, 4));
-		}
-		for (int i = 0; i < 5; i++) {
-			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
-		}
+//		for (int i = 0; i < 5; i++) {
+//			points[9][9].pedestrians.add(new Pedestrian(i%2 + 2, 4));
+//		}
+//		for (int i = 0; i < 5; i++) {
+//			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
+//		}
 		calculateFirstField();
 		calculateSecondField();
 		calculateThirdField();
@@ -334,6 +588,20 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 					list.add(prev);
 				}
 				prev = new Vector2d(x,y);
+			}
+		} catch (IOException e) {
+			System.err.println("Błąd odczytu pliku: " + e.getMessage());
+		}
+	}
+
+	public void readFileWithoutDirections(String fileName, List<Vector2d> list) {
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] numbers = line.split(" ");
+				int x = Integer.parseInt(numbers[0]);
+				int y = Integer.parseInt(numbers[1]);
+				list.add(new Vector2d(x,y));
 			}
 		} catch (IOException e) {
 			System.err.println("Błąd odczytu pliku: " + e.getMessage());
@@ -566,6 +834,15 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawNetting(g, size);
 	}
 
+	private void drawRoads(Graphics g, int gridSpace,List<Vector2d> street){
+		Vector2d vector;
+		for(int i = 0; i < street.size(); i++){
+			vector = street.get(i);
+			g.setColor(new Color(0x81000000, true));
+			g.fillRect((vector.getX() * size) + 1, (vector.getY() * size) + 1, (size - 1), (size - 1));
+		}
+	}
+
 	// draws the background netting
 	private void drawNetting(Graphics g, int gridSpace) {
 		Insets insets = getInsets();
@@ -586,6 +863,23 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			y += gridSpace;
 		}
 
+		drawRoads(g,gridSpace,street1);
+		drawRoads(g,gridSpace,street2);
+		drawRoads(g,gridSpace,street3);
+		drawRoads(g,gridSpace,street4);
+		drawRoads(g,gridSpace,street5);
+		drawRoads(g,gridSpace,street6);
+		drawRoads(g,gridSpace,street7);
+		drawRoads(g,gridSpace,street8);
+		drawRoads(g,gridSpace,street9);
+		drawRoads(g,gridSpace,street10);
+		drawRoads(g,gridSpace,street11);
+		drawRoads(g,gridSpace,street12);
+		drawRoads(g,gridSpace,street13);
+		drawRoads(g,gridSpace,street14);
+		drawRoads(g,gridSpace,leftCrossroads);
+		drawRoads(g,gridSpace,rightCrossroads);
+
 		for (x = 0; x < points.length; ++x) {
 			for (y = 0; y < points[x].length; ++y) {
 				if(points[x][y].isSidewalk){
@@ -604,7 +898,8 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
-				if (points[x][y].getLength() != 0) {
+				int type = points[x][y].getLength();
+				if (type != 0) {
 					switch (points[x][y].getLength()) {
 						case 1 -> g.setColor(new Color(0xFFEA00));
 						case 2 -> g.setColor(new Color(0x00ff00));
@@ -614,6 +909,13 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 						case 9 -> g.setColor(new Color(0x000000));
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
+					if(type == 2 || type == 3){
+						Vector2d[] tail = points[x][y].getTail();
+						for(int j = 0; j < type- 1; j++ ){
+							g.fillRect((tail[j].getX() * size) + 1, (tail[j].getY() * size) + 1, (size - 1), (size - 1));
+						}
+					}
+
 				}
 			}
 		}
@@ -649,13 +951,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 //			}
 //		}
 //	}
-	public static void saveTextToFile(String text, String filePath) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-			writer.write(text);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+
 
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / size;

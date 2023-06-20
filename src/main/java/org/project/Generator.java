@@ -8,9 +8,10 @@ public class Generator {
     private Vector2d tailVector;
 
 
-    public Generator(Vector2d initPosition, Vector2d initTailVector){
+    public Generator(Vector2d initPosition,Vector2d tailVector){
         position = initPosition;
-        tailVector = initTailVector;
+        this.tailVector = tailVector;
+
     }
 
     public Vector2d getPosition() {

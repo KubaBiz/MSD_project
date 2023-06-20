@@ -140,10 +140,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         moveOnStreet(street8);
         moveOnStreet(crossroads);
 
-        addVehicle(generator1, 15);
-        addVehicle(generator2, 17);
-        addVehicle(generator3, 19);
-        addVehicle(generator4, 23);
+        addVehicle(generator1, 5);
+        addVehicle(generator2, 7);
+        addVehicle(generator3, 5);
+        addVehicle(generator4, 4);
         clearVehicle(57, 21);
         clearVehicle(41,4);
         clearVehicle(24, 20);
@@ -191,8 +191,6 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
         clearVehicle(x, y);
         setBlocked(vector.getX(),vector.getY(),true);
-
-
 
     }
 
@@ -286,6 +284,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         readFile(localization + "\\src\\main\\java\\org\\project\\testStreet6.txt", street6);
         readFile(localization + "\\src\\main\\java\\org\\project\\testStreet7.txt", street7);
         readFile(localization + "\\src\\main\\java\\org\\project\\testStreet8.txt", street8);
+
         Vector2d vector1 = new Vector2d(41,21);
         Vector2d vector2= new Vector2d(41, 20);
         Vector2d vector3 = new Vector2d(40, 21);
@@ -307,10 +306,10 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         directions[40][21].add(new Vector2d(40,22));
         directions[40][21].add(vector1);
 
-        generator1 = new Generator(new Vector2d(41,37), new Vector2d(0,-1));
-        generator2 = new Generator(new Vector2d(57,20), new Vector2d(-1,0));
-        generator3 = new Generator(new Vector2d(40,4), new Vector2d(-1,0));
-        generator4 = new Generator(new Vector2d(24,21), new Vector2d(-1,0));
+        generator1 = new Generator(new Vector2d(41,37),new Vector2d(-1,0));
+        generator2 = new Generator(new Vector2d(57,20),new Vector2d(-1,0));
+        generator3 = new Generator(new Vector2d(40,4),new Vector2d(-1,0));
+        generator4 = new Generator(new Vector2d(24,21),new Vector2d(-1,0));
         Vector2d tmp = new Vector2d(57,20);
 
         while(directions[tmp.getX()][tmp.getY()].size()>0){

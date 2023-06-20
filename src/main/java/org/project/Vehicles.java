@@ -32,7 +32,7 @@ public class Vehicles {
     public boolean isSidewalk;
     public boolean isExit;
     public int which_exit;
-    int[] tab = {11,1,0,1,0,1,0,1,0,1,0}; // 0 skręt w prawo, 1 prosto, 11 w lewo
+    int[] tab = {11,0,1,0,1,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
     // END OF PEDESTRIANS PARAMETERS
 
     public Vehicles(int initLength, int initMaxSpeed, int initAcceleration,
@@ -56,6 +56,8 @@ public class Vehicles {
         }
     }
 
+    public void addNewDestination(){Random r = new Random();
+        destination = tab[r.nextInt(tab.length)];}
     public int getDestination() {return destination;}
     public void setDestination(){destination = destination/10;}
     public Vector2d getPosition(){
