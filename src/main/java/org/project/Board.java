@@ -21,12 +21,11 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	Generator generator1;
 	Generator generator4;
 	Generator generator5;
-
 	Generator generator10;
 	Generator generator11;
-
 	Generator generator14;
-	PedestrianGenerator generatorek;
+
+	ArrayList<PedestrianGenerator> pedestrianGenerators = new ArrayList<>();
 	private List<Vector2d> street1 = new ArrayList<>();
 	private List<Vector2d> street2 = new ArrayList<>();
 	private List<Vector2d> street3 = new ArrayList<>();
@@ -109,7 +108,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 
 	public void addVehicle(Generator generator, int frequency){
-		if( time % frequency == 0){
+		if(time % frequency == 0){
 			Vehicles vehicle = generator.generateVehicle();
 			points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
 			blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
@@ -367,6 +366,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[68][18].addNewDestination();
 		points[12][17].addNewDestination();
 
+		for (PedestrianGenerator generator: pedestrianGenerators){
+			generator.generate();
+		}
+
 		time++;
 		repaint();
 	}
@@ -502,47 +505,27 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 		//
 
-		String str1 = "\\src\\main\\java\\org\\project\\street1.txt";
-		String str2 = "";
-		String str3 = "\\src\\main\\java\\org\\project\\street3.txt";
-		String str4 = "";
-		String str5 = "";
-		String str6 = "";
-		String str7 = "";
-		String str8 = "";
-		String str9 = "";
-		String str10 = "\\src\\main\\java\\org\\project\\street10.txt";
-		String str11 = "\\src\\main\\java\\org\\project\\street11.txt";
-		String str12 = "";
-		String str13 = "";
-		String str14 = "\\src\\main\\java\\org\\project\\street14.txt";
 		String borderPath = "\\src\\main\\java\\org\\project\\borders.txt";
 		String buildingsPath = "\\src\\main\\java\\org\\project\\buildings.txt";
 
 		String border = localization + borderPath;
 		String buildings = localization + buildingsPath;
 		String sidewalks = localization + "\\src\\main\\java\\org\\project\\sidewalks.txt";
-		String street1 = localization + str1;
-		String street2 = localization + str2;
-		String street3 = localization + str3;
-		String street4 = localization + str4;
-		String street5 = localization + str5;
-		String street6 = localization + str6;
-		String street7 = localization + str7;
-		String street8 = localization + str8;
-		String street9 = localization + str9;
-		String street10 = localization + str10;
-		String street11 = localization + str11;
-		String street12 = localization + str12;
-		String street13 = localization + str13;
-		String street14 = localization + str14;
-
 
 		drawFromFile(border, 9, 0);
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
 
-		generatorek = new PedestrianGenerator(new int[]{25,25,0,0},new int[]{20,10,10,10,10,10,10},points[57][16]);
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[9][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[2][20]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[7][35]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[12][35]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[66][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[73][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[75][16]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[75][19]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[73][35]));
+
 		points[9][1].which_exit = 1; // 0 na rysunku piesi.png
 		points[9][1].isExit = true;
 		points[7][36].which_exit = 2; // 1 na rysunku piesi.png
@@ -559,12 +542,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[76][19].isExit = true;
 		points[73][36].which_exit = 8; // 7 na rysunku piesi.png
 		points[73][36].isExit = true;
-//		for (int i = 0; i < 5; i++) {
-//			points[9][9].pedestrians.add(new Pedestrian(i%2 + 2, 4));
-//		}
-//		for (int i = 0; i < 5; i++) {
-//			points[9][15].pedestrians.add(new Pedestrian(i%2 + 2, 1));
-//		}
+
 		calculateFirstField();
 		calculateSecondField();
 		calculateThirdField();
@@ -838,7 +816,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		Vector2d vector;
 		for(int i = 0; i < street.size(); i++){
 			vector = street.get(i);
-			g.setColor(new Color(0x81000000, true));
+			g.setColor(new Color(0xD3D3D3));
 			g.fillRect((vector.getX() * size) + 1, (vector.getY() * size) + 1, (size - 1), (size - 1));
 		}
 	}
@@ -885,16 +863,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				if(points[x][y].isSidewalk){
 					g.setColor(new Color(0xAAAAAA));
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
-					if (points[x][y].pedestrians.size() > 0){
-						g.setColor(new Color(0xFF00FF));
-						g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
-					}
 					switch (points[x][y].pedestrians.size()){
-						case 1 -> g.setColor(new Color(0xFF0000));
-						case 2 -> g.setColor(new Color(0xFFFF00));
-						case 3 -> g.setColor(new Color(0xFF00FF));
-						case 4 -> g.setColor(new Color(0x00FFFF));
-						case 5 -> g.setColor(new Color(0x00FF00));
+						case 1 -> g.setColor(new Color(0xCCE5FF));
+						case 2 -> g.setColor(new Color(0x99CCFF));
+						case 3 -> g.setColor(new Color(0x6699FF));
+						case 4 -> g.setColor(new Color(0x3366FF));
+						case 5 -> g.setColor(new Color(0x0000FF));
 					}
 					g.fillRect((x * size) + 1, (y * size) + 1, (size - 1), (size - 1));
 				}
@@ -969,6 +943,25 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			if(editType<4) {
 				points[x][y].setLength(editType);
 				System.out.println(String.valueOf(x) + " " + String.valueOf(y));
+				this.repaint();
+			}
+			if(editType == 5 && points[x][y].getLength() != editType){
+				String localization = System.getProperty("user.dir");
+				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
+				String fileName = localization + str1;
+				try {
+					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+
+					writer.write(Integer.toString(x) + " " + Integer.toString(y));
+					writer.newLine();
+
+					writer.close();
+
+					System.out.println("Numbers have been added to the file.");
+				} catch (IOException exception) {
+					System.out.println("An error occurred: " + exception.getMessage());
+				}
+				points[x][y].setLength(editType);
 				this.repaint();
 			}
 
