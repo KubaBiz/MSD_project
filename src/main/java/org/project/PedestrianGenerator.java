@@ -80,8 +80,16 @@ public class PedestrianGenerator {
                 else { //8
                     whereTo = 8;
                 }
-                randomNumber = random.nextInt(3);
-                entrance.pedestrians.add(new Pedestrian(randomNumber+2,whereTo));
+                randomNumber = random.nextInt(100);
+                int number;
+                if (randomNumber < 20) {
+                    number = 2;
+                } else if (randomNumber < 80) {
+                    number = 3;
+                } else {
+                    number = 4;
+                }
+                entrance.pedestrians.add(new Pedestrian(number,whereTo));
             }
             nextiteration = 3;
         }

@@ -489,18 +489,18 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		//PEDESTRIANS
 		for (int x = 1; x < points.length-1; ++x) {
 			for (int y = 1; y < points[x].length-1; ++y) {
-				points[x][y].addNeighbor(points[x-1][y-1]);
-				points[x][y].addNeighbor(points[x-1][y]);
-				points[x][y].leftNeighbor = points[x-1][y];
-				points[x][y].addNeighbor(points[x-1][y+1]);
 				points[x][y].addNeighbor(points[x][y+1]);
 				points[x][y].downNeighbor = points[x][y+1];
-				points[x][y].addNeighbor(points[x][y-1]);
-				points[x][y].upNeighbor = points[x][y-1];
-				points[x][y].addNeighbor(points[x+1][y-1]);
 				points[x][y].addNeighbor(points[x+1][y]);
 				points[x][y].rightNeighbor = points[x+1][y];
+				points[x][y].addNeighbor(points[x][y-1]);
+				points[x][y].upNeighbor = points[x][y-1];
+				points[x][y].addNeighbor(points[x-1][y]);
+				points[x][y].leftNeighbor = points[x-1][y];
 				points[x][y].addNeighbor(points[x+1][y+1]);
+				points[x][y].addNeighbor(points[x-1][y-1]);
+				points[x][y].addNeighbor(points[x-1][y+1]);
+				points[x][y].addNeighbor(points[x+1][y-1]);
 			}
 		}
 		//
