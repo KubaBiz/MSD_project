@@ -516,15 +516,15 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		drawFromFile(buildings, 8, 0);
 		drawFromFile(sidewalks, 0, 1);
 
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[9][2]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[2][20]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[7][35]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[12][35]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[66][2]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[73][2]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[75][16]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[75][19]));
-		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,0,0,0},new int[]{10,10,10,10,10,10,10},points[73][35]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{30,15,5,0},new int[]{0,20,0,25,0,40,0},points[9][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{3,0,0,0},new int[]{40,40,0,10,0,10,0},points[2][20]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{15,9,1,0},new int[]{20,0,0,15,5,25,15},points[7][35]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{10,5,0,0},new int[]{25,0,0,10,0,30,20},points[12][35]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{20,2,0,0},new int[]{30,20,10,0,0,20,10},points[66][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{10,1,0,0},new int[]{15,10,10,0,0,40,10},points[73][2]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{25,10,2,0},new int[]{45,25,0,0,20,0,0},points[75][16]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{10,5,0,0},new int[]{25,15,10,10,10,0,0},points[75][19]));
+		pedestrianGenerators.add(new PedestrianGenerator(new int[]{8,0,0,0},new int[]{30,15,5,20,15,5,10},points[73][35]));
 
 		points[9][1].which_exit = 1; // 0 na rysunku piesi.png
 		points[9][1].isExit = true;
