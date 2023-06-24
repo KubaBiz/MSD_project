@@ -5,10 +5,10 @@ import java.util.Random;
 public class PedestrianGenerator {
     private int[] pedestrianChances; // wielkość tablicy 4
     private int[] exitChances; //wielkość tablicy 7
-    private Vehicles entrance;
+    private Point entrance;
     private int nextiteration;
 
-    public PedestrianGenerator(int[] pedestrianchances, int[] exitchances, Vehicles entrance){
+    public PedestrianGenerator(int[] pedestrianchances, int[] exitchances, Point entrance){
         pedestrianChances = pedestrianchances;
         exitChances = exitchances;
         this.entrance = entrance;

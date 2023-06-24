@@ -9,11 +9,10 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class TestBoard extends JComponent implements MouseInputListener, ComponentListener {
 
-    private Vehicles[][] points;
+    private Point[][] points;
     private List<Vector2d>[][] directions;
     private List<Vector2d> lowerMaxSpeedVectors = new ArrayList<>();
     private List<Vector2d> increaseMaxSpeedVectors = new ArrayList<>();
@@ -82,7 +81,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
 
     public void addVehicle(Generator generator, int frequency){
         if( time % frequency == 0){
-            Vehicles vehicle = generator.generateVehicle();
+            Point vehicle = generator.generateVehicle();
             points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
             blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
         }
@@ -263,13 +262,13 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     }
 
     private void initialize(int length, int height) {
-        points = new Vehicles[length][height];
+        points = new Point[length][height];
         directions = new List[length][height];
         blocked = new Boolean[length][height];
 
         for (int x = 0; x < points.length; ++x)
             for (int y = 0; y < points[x].length; ++y){
-                points[x][y] = new Vehicles(0,0,0,0,
+                points[x][y] = new Point(0,0,0,0,
                         new Vector2d(-1,-1),new Vector2d(0,0));
                 directions[x][y] = new ArrayList<>();
                 blocked[x][y] = false;

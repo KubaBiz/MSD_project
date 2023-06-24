@@ -10,12 +10,10 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import static java.lang.Math.random;
 
 public class Board extends JComponent implements MouseInputListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	private Vehicles[][] points;
+	private Point[][] points;
 	private List<Vector2d>[][] directions;
 	private Boolean[][] blocked;
 	Generator generator1;
@@ -109,7 +107,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	public void addVehicle(Generator generator, int frequency){
 		if(time % frequency == 0){
-			Vehicles vehicle = generator.generateVehicle();
+			Point vehicle = generator.generateVehicle();
 			points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
 			blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
 		}
@@ -411,7 +409,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	}
 
 	private void initialize(int length, int height) {
-		points = new Vehicles[length][height];
+		points = new Point[length][height];
 		directions = new List[length][height];
 		blocked = new Boolean[length][height];
 
@@ -424,7 +422,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		for (int x = 0; x < points.length; ++x)
 			for (int y = 0; y < points[x].length; ++y){
-				points[x][y] = new Vehicles(0,0,0,0,
+				points[x][y] = new Point(0,0,0,0,
 						new Vector2d(-1,-1),new Vector2d(0,0));
 				directions[x][y] = new ArrayList<>();
 				blocked[x][y] = false;
@@ -607,7 +605,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	//PEDESTRIANS
 	public void calculateFirstField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==1){
@@ -619,9 +617,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(0)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(0) > temp.staticFields.get(0)){
 						toCheck.add(neighbor);
 					}
@@ -631,7 +629,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateSecondField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==2){
@@ -643,9 +641,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(1)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(1) > temp.staticFields.get(1)){
 						toCheck.add(neighbor);
 					}
@@ -655,7 +653,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateThirdField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==3){
@@ -667,9 +665,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(2)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(2) > temp.staticFields.get(2)){
 						toCheck.add(neighbor);
 					}
@@ -679,7 +677,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateFourthField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==4){
@@ -691,9 +689,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(3)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(3) > temp.staticFields.get(3)){
 						toCheck.add(neighbor);
 					}
@@ -703,7 +701,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateFifthField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==5){
@@ -715,9 +713,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(4)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(4) > temp.staticFields.get(4)){
 						toCheck.add(neighbor);
 					}
@@ -727,7 +725,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateSixthField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==6){
@@ -739,9 +737,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(5)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(5) > temp.staticFields.get(5)){
 						toCheck.add(neighbor);
 					}
@@ -751,7 +749,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateSeventhField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==7){
@@ -763,9 +761,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(6)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(6) > temp.staticFields.get(6)){
 						toCheck.add(neighbor);
 					}
@@ -775,7 +773,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 	public void calculateEighthField(){
-		ArrayList<Vehicles> toCheck = new ArrayList<>();
+		ArrayList<Point> toCheck = new ArrayList<>();
 		for (int x = 1; x < points.length-1; ++x){
 			for (int y = 1; y < points[x].length-1; ++y){
 				if(points[x][y].isSidewalk && points[x][y].which_exit==8){
@@ -787,9 +785,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
-			Vehicles temp=toCheck.get(0);
+			Point temp=toCheck.get(0);
 			if(temp.isSidewalk && temp.calcStaticField(7)) {
-				for (Vehicles neighbor : temp.neighbors) {
+				for (Point neighbor : temp.neighbors) {
 					if (neighbor.staticFields.get(7) > temp.staticFields.get(7)){
 						toCheck.add(neighbor);
 					}

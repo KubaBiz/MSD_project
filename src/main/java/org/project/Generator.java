@@ -18,14 +18,14 @@ public class Generator {
         return position;
     }
 
-    public Vehicles generateVehicle(){
+    public Point generateVehicle(){
         Random r = new Random();
 
 
 
-        Vehicles bike = new Vehicles(1,1,1,1, position, tailVector);
-        Vehicles car = new Vehicles(2,4,2,2,position,tailVector);
-        Vehicles bigCar = new Vehicles(3,3,1,2,position, tailVector);
+        Point bike = new Point(1,1,1,1, position, tailVector);
+        Point car = new Point(2,4,2,2,position,tailVector);
+        Point bigCar = new Point(3,3,1,2,position, tailVector);
 
 
         int draw = r.nextInt(0,100);
