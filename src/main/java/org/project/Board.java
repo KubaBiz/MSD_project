@@ -614,7 +614,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				}
 			}
 		}
-
 		while(!toCheck.isEmpty()){
 			// IMPROVED CALCULATION OF STATIC FLOOR FIELD
 			Point temp=toCheck.get(0);

@@ -280,8 +280,6 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;

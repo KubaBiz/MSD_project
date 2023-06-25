@@ -12,7 +12,6 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 	private Timer timer;
 	private Board board;
 	private JButton start;
-	private JButton clear;
 	private JComboBox<Integer> drawType;
 	private JSlider pred;
 	private JFrame frame;
@@ -37,10 +36,6 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 		start.setActionCommand("Start");
 		start.addActionListener(this);
 
-		clear = new JButton("Clear");
-		clear.setActionCommand("clear");
-		clear.addActionListener(this);
-
 		pred = new JSlider();
 		pred.setMinimum(0);
 		pred.setMaximum(maxDelay);
@@ -52,7 +47,6 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 		drawType.setActionCommand("drawType");
 
 		buttonPanel.add(start);
-		buttonPanel.add(clear);
 		buttonPanel.add(drawType);
 		buttonPanel.add(pred);
 
@@ -77,7 +71,6 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 					start.setText("Start");
 				}
 				running = !running;
-				clear.setEnabled(true);
 
 			} else if (command.equals("clear")) {
 				iterNum = 0;
