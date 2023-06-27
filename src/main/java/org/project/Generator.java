@@ -30,7 +30,7 @@ public class Generator {
 
         int draw = r.nextInt(0,100);
         if(draw < 15) return bike;
-        else if (draw < 93) return  car;
+        else if (draw < 98) return  car;
         else return bigCar;
     }
 }

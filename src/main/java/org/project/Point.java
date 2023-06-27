@@ -33,7 +33,7 @@ public class Point {
     public boolean isSidewalk;
     public boolean isExit;
     public int which_exit;
-    int[] tab = {11,0,1,0,1,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
+    int[] tab = {11,0,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
     // END OF PEDESTRIANS PARAMETERS
 
     public Point(int initLength, int initMaxSpeed, int initAcceleration,
