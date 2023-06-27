@@ -18,6 +18,7 @@ public class Point {
     private Vector2d tail[];
     public boolean moved;
     private int destination;
+    int[] tab = {11,0,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
     // END OF VEHICLE PARAMETERS
 
     // PEDESTRIANS PARAMETERS
@@ -33,8 +34,9 @@ public class Point {
     public boolean isSidewalk;
     public boolean isExit;
     public int which_exit;
-    int[] tab = {11,0,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
     // END OF PEDESTRIANS PARAMETERS
+
+    public static int[] statistics = {0, 0, 0, 0, 0, 0, 0, 0};
 
     public Point(int initLength, int initMaxSpeed, int initAcceleration,
                  int initDeceleration, Vector2d initPosition, Vector2d tailVector){
@@ -100,14 +102,14 @@ public class Point {
     public void setPosition(Vector2d position) {
         this.position = position;
     }
-    public void setTail(/*Vector2d[] tail*/) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public void setTail(/*Vector2d[] tail*/) {
         if (length > 1) {
             tail  = new Vector2d[length-1];
             for(int i = 0; i < length-1; i++){
                 tail[i] = position;
             }
         }
-    } //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
     public void copyVehicleToAnotherTile(Point other){
         length = other.length;
@@ -148,7 +150,6 @@ public class Point {
                 if (neighbor.staticFields.get(0) <= min) {
                     min = neighbor.staticFields.get(0);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(0) > min + 1) {
                 staticFields.set(0, min + 1);
@@ -162,7 +163,6 @@ public class Point {
                 if (neighbor.staticFields.get(1) <= min) {
                     min = neighbor.staticFields.get(1);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(1) > min + 1) {
                 staticFields.set(1, min + 1);
@@ -176,7 +176,6 @@ public class Point {
                 if (neighbor.staticFields.get(2) <= min) {
                     min = neighbor.staticFields.get(2);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(2) > min + 1) {
                 staticFields.set(2, min + 1);
@@ -190,7 +189,6 @@ public class Point {
                 if (neighbor.staticFields.get(3) <= min) {
                     min = neighbor.staticFields.get(3);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(3) > min + 1) {
                 staticFields.set(3, min + 1);
@@ -204,7 +202,6 @@ public class Point {
                 if (neighbor.staticFields.get(4) <= min) {
                     min = neighbor.staticFields.get(4);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(4) > min + 1) {
                 staticFields.set(4, min + 1);
@@ -218,7 +215,6 @@ public class Point {
                 if (neighbor.staticFields.get(5) <= min) {
                     min = neighbor.staticFields.get(5);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(5) > min + 1) {
                 staticFields.set(5, min + 1);
@@ -232,7 +228,6 @@ public class Point {
                 if (neighbor.staticFields.get(6) <= min) {
                     min = neighbor.staticFields.get(6);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(6) > min + 1) {
                 staticFields.set(6, min + 1);
@@ -246,7 +241,6 @@ public class Point {
                 if (neighbor.staticFields.get(7) <= min) {
                     min = neighbor.staticFields.get(7);
                 }
-                // REPULSION FORCE BETWEEN THE WALLS OR REPULSION IN DIFFERENT PASSAGES
             }
             if (staticFields.get(7) > min + 1) {
                 staticFields.set(7, min + 1);
@@ -283,6 +277,7 @@ public class Point {
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[0] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -305,11 +300,10 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[1] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -332,8 +326,6 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     for (Point element : possible) {
                         if (element.equals(downNeighbor)) {
@@ -343,6 +335,7 @@ public class Point {
                     }
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[2] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -365,11 +358,10 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[3] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -392,11 +384,10 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[4] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -413,18 +404,16 @@ public class Point {
                     if (neighbor.staticFields.get(5) < min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
                         min = neighbor.staticFields.get(5);
                         possible.clear();
-                        possible.clear();
                         possible.add(neighbor);
                     } else if (neighbor.staticFields.get(5) == min && neighbor.pedestrians.size()<5 && neighbor.isSidewalk) {
                         possible.add(neighbor);
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[5] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -447,11 +436,10 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[6] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();
@@ -474,11 +462,10 @@ public class Point {
                     }
                 }
                 if (possible.size() > 0) {
-                    Random random = new Random();
-                    //Vehicles next = possible.get(random.nextInt(possible.size()));
                     Point next = possible.get(0);
                     if (next.isExit) {
                         pedestrian.toRemove = true;
+                        statistics[7] += 1;
                     } else {
                         pedestrian.toRemove = true;
                         pedestrian.iteration = pedestrian.getTimeToMove();

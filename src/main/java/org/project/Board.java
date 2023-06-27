@@ -29,7 +29,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	private List<Vector2d> street2 = new ArrayList<>();
 	private List<Vector2d> street3 = new ArrayList<>();
 	private List<Vector2d> street4 = new ArrayList<>();
-	private List<Vector2d> street5 = new ArrayList<>();
 	private List<Vector2d> street6 = new ArrayList<>();
 	private List<Vector2d> street7 = new ArrayList<>();
 	private List<Vector2d> street8 = new ArrayList<>();
@@ -53,7 +52,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
 	public int editType = 0;
-
+	public int[] vehicleStatistics = {0, 0, 0, 0, 0};
 
 	public Board(int length, int height) {
 		initialize(length, height);
@@ -155,12 +154,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[vector.getX()][vector.getY()].moved = true;
 		points[vector.getX()][vector.getY()].setPosition(vector);
 
-		clearVehicle(x, y);
+		clearVehicle(x, y, false);
 		setBlocked(vector.getX(),vector.getY(),true);
 
 	}
 
-	public void enterningTheCrossroads(Vector2d vector1, Vector2d vector2, Vector2d vector3, Vector2d vector4, List<Vector2d> crossroads) {
+	public void enteringTheCrossroads(Vector2d vector1, Vector2d vector2, Vector2d vector3, Vector2d vector4, List<Vector2d> crossroads) {
 		List<Vector2d> vectorsList = new ArrayList<>();
 		vectorsList.add(vector1);
 		vectorsList.add(vector2);
@@ -190,11 +189,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				}
 			}
 			//jesli nie ma po prawej stronie a auto skreca w lewo to patrzymy czy jedzie auto z
-			// naprzeciw (destinantion == 11 oznacza skret w lewo)
+			// naprzeciw (destination == 11 oznacza skret w lewo)
 			else if (points[current.getX()][current.getY()].getDestination()==11 && points[straight.getX()][straight.getY()].getLength() != 0)  {
 				points[current.getX()][current.getY()].setSpeed(0);
 			}
-
 		}
 
 		// jesli jakies auto jest na skrzyzowaniu to reszta na nie nie wjezdza
@@ -295,10 +293,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			}
 		}
 
-		enterningTheCrossroads(new Vector2d(9, 18),new Vector2d(11, 19),
+		enteringTheCrossroads(new Vector2d(9, 18),new Vector2d(11, 19),
 				new Vector2d(12, 17),new Vector2d(10, 16),leftCrossroads);
 
-		enterningTheCrossroads(new Vector2d(68, 18), new Vector2d(70, 19),
+		enteringTheCrossroads(new Vector2d(68, 18), new Vector2d(70, 19),
 				new Vector2d(71, 17), new Vector2d(69, 16), rightCrossroads);
 
 
@@ -306,7 +304,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		moveOnStreet(street2);
 		moveOnStreet(street3);
 		moveOnStreet(street4);
-		moveOnStreet(street5);
 		moveOnStreet(street6);
 		moveOnStreet(street7);
 		moveOnStreet(street8);
@@ -319,19 +316,17 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		moveOnStreet(leftCrossroads);
 		moveOnStreet(rightCrossroads);
 
-		addVehicle(generator1, 41);
-//		addVehicle(generator5, 13);
-		addVehicle(generator10, 25);
-		addVehicle(generator4, 24);
-		addVehicle(generator14, 39);
-		addVehicle(generator11, 25);
+		addVehicle(generator1, 55);
+		addVehicle(generator10, 80);
+		addVehicle(generator4, 20);
+		addVehicle(generator14, 35);
+		addVehicle(generator11, 45);
 
-		clearVehicle(10, 35);
-		clearVehicle(69,35);
-		clearVehicle(75, 18);
-		clearVehicle(70, 2);
-//		clearVehicle(11, 2);
-		clearVehicle(2, 2);
+		clearVehicle(10, 35, true);
+		clearVehicle(69,35, true);
+		clearVehicle(75, 18, true);
+		clearVehicle(70, 2, true);
+		clearVehicle(2, 2, true);
 
 		points[68][18].addNewDestination();
 		points[12][17].addNewDestination();
@@ -340,11 +335,71 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			generator.generate();
 		}
 
+		if (time % 100 == 0){
+			saveToCSV();
+		}
 		time++;
 		repaint();
 	}
 
-	public void clearVehicle(int x,int y){
+	public void saveToCSV(){
+		String filePath = "data.csv";
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(time).append(";");
+			sb.append(Point.statistics[0]).append(";");
+			sb.append(Point.statistics[1]).append(";");
+			sb.append(Point.statistics[2]).append(";");
+			sb.append(Point.statistics[3]).append(";");
+			sb.append(Point.statistics[4]).append(";");
+			sb.append(Point.statistics[5]).append(";");
+			sb.append(Point.statistics[6]).append(";");
+			sb.append(Point.statistics[7]).append(";");
+			sb.append(vehicleStatistics[0]).append(";");
+			sb.append(vehicleStatistics[1]).append(";");
+			sb.append(vehicleStatistics[2]).append(";");
+			sb.append(vehicleStatistics[3]).append(";");
+			sb.append(vehicleStatistics[4]).append(";");
+			writer.write(sb.toString());
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Point.statistics[0] = 0;
+		Point.statistics[1] = 0;
+		Point.statistics[2] = 0;
+		Point.statistics[3] = 0;
+		Point.statistics[4] = 0;
+		Point.statistics[5] = 0;
+		Point.statistics[6] = 0;
+		Point.statistics[7] = 0;
+		vehicleStatistics[0] = 0;
+		vehicleStatistics[1] = 0;
+		vehicleStatistics[2] = 0;
+		vehicleStatistics[3] = 0;
+		vehicleStatistics[4] = 0;
+	}
+	public void clearVehicle(int x,int y, boolean toStatistics){
+		if (blocked[x][y] && toStatistics){
+			switch (x){
+				case 2:
+					vehicleStatistics[0] += 1;
+					break;
+				case 10:
+					vehicleStatistics[1] += 1;
+					break;
+				case 69:
+					vehicleStatistics[2] += 1;
+					break;
+				case 70:
+					vehicleStatistics[3] += 1;
+					break;
+				case 75:
+					vehicleStatistics[4] += 1;
+					break;
+			}
+		}
 		if(points[x][y].getLength() > 1){
 			for(int i = 0 ; i < points[x][y].getTail().length; i ++){
 				blocked[points[x][y].getTail()[i].getX()][points[x][y].getTail()[i].getY()] = false;
@@ -357,7 +412,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		points[x][y].setDeceleration(0);
 		points[x][y].addNewDestination(0);
 		points[x][y].setPosition(new Vector2d(-1,-1));
-		points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		points[x][y].setTail();
 		blocked[x][y] = false;
 	}
 
@@ -365,7 +420,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	public void clear() {
 		for (int x = 0; x < points.length; ++x)
 			for (int y = 0; y < points[x].length; ++y) {
-				clearVehicle(x, y);
+				clearVehicle(x, y, false);
 				points[x][y].clearPedestrians();
 			}
 
@@ -440,7 +495,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		readFile(localization + "\\src\\main\\java\\org\\project\\street2.txt", street2);
 		readFile(localization + "\\src\\main\\java\\org\\project\\street3.txt", street3);
 		readFile(localization + "\\src\\main\\java\\org\\project\\street4.txt", street4);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street5.txt", street5);
 		readFile(localization + "\\src\\main\\java\\org\\project\\street6.txt", street6);
 		readFile(localization + "\\src\\main\\java\\org\\project\\street7.txt", street7);
 		readFile(localization + "\\src\\main\\java\\org\\project\\street8.txt", street8);
@@ -522,6 +576,15 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		calculateSixthField();
 		calculateSeventhField();
 		calculateEighthField();
+
+		String filePath = "data.csv";
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+			writer.write("Iteracja;0;1;2;3;4;5;6;7;Wyjazd 2;Wyjazd 3;Wyjazd 9;Wyjazd 12;Wyjazd 13;");
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void readFile(String fileName, List<Vector2d> list) {
@@ -811,22 +874,21 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			y += gridSpace;
 		}
 
-		drawRoads(g,gridSpace,street1, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street2, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street3, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street4, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street5, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street6, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street7, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street8, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street9, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street10, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street11, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street12, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street13, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,street14, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,leftCrossroads, new Color(0x81000000, true));
-		drawRoads(g,gridSpace,rightCrossroads, new Color(0x81000000, true));
+		drawRoads(g,gridSpace,street1, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street2, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street3, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street4, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street6, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street7, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street8, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street9, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street10, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street11, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street12, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street13, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,street14, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,leftCrossroads, new Color(0x81202020, true));
+		drawRoads(g,gridSpace,rightCrossroads, new Color(0x81202020, true));
 
 
 		for (x = 0; x < points.length; ++x) {
