@@ -332,7 +332,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 	public void saveToCSV(){
 		String filePath = "data.csv";
-
+		int sum = Point.statistics[0] + Point.statistics[1] + Point.statistics[2] + Point.statistics[3] +
+				Point.statistics[4] + Point.statistics[5] + Point.statistics[6] + Point.statistics[7];
+		int sum2 = vehicleStatistics[0] + vehicleStatistics[1] + vehicleStatistics[2] + vehicleStatistics[3] + vehicleStatistics[4];
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(time).append(";");
@@ -349,6 +351,8 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			sb.append(vehicleStatistics[2]).append(";");
 			sb.append(vehicleStatistics[3]).append(";");
 			sb.append(vehicleStatistics[4]).append(";");
+			sb.append(sum).append(";");
+			sb.append(sum2).append(";");
 			writer.write(sb.toString());
 			writer.newLine();
 		} catch (IOException e) {
@@ -568,7 +572,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		String filePath = "data.csv";
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-			writer.write("Iteracja;0;1;2;3;4;5;6;7;Wyjazd 2;Wyjazd 3;Wyjazd 9;Wyjazd 12;Wyjazd 13;");
+			writer.write("Iteracja;0;1;2;3;4;5;6;7;Wyjazd 2;Wyjazd 3;Wyjazd 9;Wyjazd 12;Wyjazd 13;Suma pieszych;Suma pojazdow;");
 			writer.newLine();
 		} catch (IOException e) {
 			e.printStackTrace();
