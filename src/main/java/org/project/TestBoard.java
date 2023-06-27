@@ -68,11 +68,12 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         return sum;
     }
 
-    public void moveOnStreet(List<Vector2d> streetName){
+
+    public void TrafficOnTheRoad(List<Vector2d> streetName){
         for(int i = 0; i < streetName.size(); i ++){
             Vector2d vector = streetName.get(i);
             if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
-            && points[vector.getX()][vector.getY()].getSpeed() > 0)
+                    && points[vector.getX()][vector.getY()].getSpeed() > 0)
             {
                 speedChanges(vector.getX(), vector.getY());
                 moveVehicles(vector.getX(), vector.getY());}
@@ -80,7 +81,7 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
     }
 
     public void addVehicle(Generator generator, int frequency){
-        if( time % frequency == 0){
+        if(time % frequency == 0){
             Point vehicle = generator.generateVehicle();
             points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
             blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
@@ -124,25 +125,23 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             }
         }
 
-        intersectionEntrance(new Vector2d(41,22));
-        intersectionEntrance(new Vector2d(42,20));
-        intersectionEntrance(new Vector2d(40,19));
-        intersectionEntrance(new Vector2d(39,21));
+        enterningTheCrossroads(new Vector2d(41,22), new Vector2d(42,20), new Vector2d(40,19), new Vector2d(39,21), crossroads);
 
-        moveOnStreet(street1);
-        moveOnStreet(street2);
-        moveOnStreet(street3);
-        moveOnStreet(street4);
-        moveOnStreet(street5);
-        moveOnStreet(street6);
-        moveOnStreet(street7);
-        moveOnStreet(street8);
-        moveOnStreet(crossroads);
 
-        addVehicle(generator1, 5);
-        addVehicle(generator2, 7);
-        addVehicle(generator3, 5);
-        addVehicle(generator4, 4);
+        TrafficOnTheRoad(street1);
+        TrafficOnTheRoad(street2);
+        TrafficOnTheRoad(street3);
+        TrafficOnTheRoad(street4);
+        TrafficOnTheRoad(street5);
+        TrafficOnTheRoad(street6);
+        TrafficOnTheRoad(street7);
+        TrafficOnTheRoad(street8);
+        TrafficOnTheRoad(crossroads);
+
+        addVehicle(generator1, 12);
+        addVehicle(generator2, 10);
+        addVehicle(generator3, 13);
+        addVehicle(generator4, 10);
         clearVehicle(57, 21);
         clearVehicle(41,4);
         clearVehicle(24, 20);
@@ -171,7 +170,6 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
             if(directions[vector.getX()][vector.getY()].size() > 1){
                 iter = points[x][y].getDestination() % 10;
                 points[x][y].setDestination();
-                System.out.println(points[x][y].getDestination());
 
             }
             else{
@@ -205,53 +203,79 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
         points[x][y].setMaxSpeed(0);
         points[x][y].setAcceleration(0);
         points[x][y].setDeceleration(0);
+        points[x][y].addNewDestination(0);
         points[x][y].setPosition(new Vector2d(-1,-1));
         points[x][y].setTail(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         blocked[x][y] = false;
     }
 
-    public void intersectionEntrance(Vector2d vector){
+    public void enterningTheCrossroads(Vector2d vector1, Vector2d vector2, Vector2d vector3, Vector2d vector4, List<Vector2d> crossroads) {
+        List<Vector2d> vectorsList = new ArrayList<>();
+        vectorsList.add(vector1);
+        vectorsList.add(vector2);
+        vectorsList.add(vector3);
+        vectorsList.add(vector4);
+        Vector2d current;
+        Vector2d right;
+        Vector2d straight;
+        boolean flag = true;
 
-        Vector2d right = new Vector2d(0,0);
+        for(int i = 0; i < 4; i++){
+            current = vectorsList.get(i);
+            right = vectorsList.get((i+1)%4);
+            straight = vectorsList.get((i+2)%4);
 
-        if (vector.equals(new Vector2d(41,22))){
-            right = new Vector2d(42,20);
-        }
-        else if (vector.equals(new Vector2d(40,19))){
-            right = new Vector2d(39,21);
-        }
-        else if (vector.equals(new Vector2d(42,20))){
-            right = new Vector2d(40,19);
-        }
-        else if (vector.equals(new Vector2d(39,21))){
-            right = new Vector2d(41,22);
-            if(blocked[42][20] && points[vector.getX()][vector.getY()].getDestination() == 11)
-                points[vector.getX()][vector.getY()].setSpeed(0);
+            //sprawdzanie czy ktos jest po prawej stronie
+            if(points[right.getX()][right.getY()].getLength() != 0){
+                points[current.getX()][current.getY()].setSpeed(0);
+
+                //jesli jest po prawej stronie ale sb nie kolidują to obaj jadą
+                if(points[current.getX()][current.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
+                    points[current.getX()][current.getY()].setSpeed(1);
+                }
+                else if(points[current.getX()][current.getY()].getDestination() == points[right.getX()][right.getY()].getDestination()
+                        && points[current.getX()][current.getY()].getDestination() == 0){
+                    points[current.getX()][current.getY()].setSpeed(1);
+                }
+            }
+            //jesli nie ma po prawej stronie a auto skreca w lewo to patrzymy czy jedzie auto z
+            // naprzeciw (destinantion == 11 oznacza skret w lewo)
+            else if (points[current.getX()][current.getY()].getDestination()==11 && points[straight.getX()][straight.getY()].getLength() != 0)  {
+                points[current.getX()][current.getY()].setSpeed(0);
+            }
+
         }
 
-        if(blocked[right.getX()][right.getY()])
-            points[vector.getX()][vector.getY()].setSpeed(0);
-        if(points[vector.getX()][vector.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
-            points[vector.getX()][vector.getY()].setSpeed(1);
-        }
-        else if(points[vector.getX()][vector.getY()].getDestination() == points[right.getX()][right.getY()].getDestination() &&
-                points[vector.getX()][vector.getY()].getDestination() == 0){
-            points[vector.getX()][vector.getY()].setSpeed(1);
-        }
-
+        // jesli jakies auto jest na skrzyzowaniu to reszta na nie nie wjezdza
         for(int i = 0; i < crossroads.size(); i++){
             Vector2d tmp = crossroads.get(i);
             if(blocked[tmp.getX()][tmp.getY()]){
-                points[vector.getX()][vector.getY()].moved = true;
-                break;
+                for(int j = 0; j < 4; j++){
+                    current = vectorsList.get(j);
+                    points[current.getX()][current.getY()].moved = true;
+                }
             }
         }
 
-        if(points[41][22].getSpeed() == points[42][20].getSpeed() &&  points[40][19].getSpeed() == points[39][21].getSpeed()
-                && points[42][20].getSpeed() == points[40][19].getSpeed() && points[40][19].getSpeed() == 0){
-            points[42][20].setSpeed(1);
+        // jesli wszystkie auta maja ustawiona predkosc 0 to rusza pierwsze auto z listy wektorów
+        for(int j = 0; j < 4; j++){
+            current = vectorsList.get(j);
+            if(points[current.getX()][current.getY()].getSpeed() != 0 && points[current.getX()][current.getY()].getLength() != 0){
+                flag = false;
+                break;
+            }
+        }
+        if(flag){
+            for(int i =0; i < 4; i++){
+                current = vectorsList.get(i);
+                if(points[current.getX()][current.getY()].getLength() != 0){
+                    points[current.getX()][current.getY()].setSpeed(1);
+                    break;
+                }
+            }
         }
     }
+
     public TestBoard(int length, int height) {
         initialize(length, height);
         addMouseListener(this);
@@ -407,7 +431,16 @@ public class TestBoard extends JComponent implements MouseInputListener, Compone
                 if (type != 0) {
                     switch (points[x][y].getLength()) {
                         case 1 -> g.setColor(new Color(0xFFEA00));
-                        case 2 -> g.setColor(new Color(0x00ff00));
+                        case 2 -> {switch (points[x][y].color){
+                            case 0 -> g.setColor(new Color(0xFFA40EF6, true));
+                            case 1 -> g.setColor(new Color(0xA45F0E));
+                            case 2 -> g.setColor(new Color(0x7BFF00));
+                            case 3 -> g.setColor(new Color(0x03D7B7));
+                            case 4 -> g.setColor(new Color(0xFFA40EF6, true));
+                            case 5 -> g.setColor(new Color(0x6B5D0A));
+                            case 6 -> g.setColor(new Color(0x980F6D));
+                            case 7 -> g.setColor(new Color(0xFF659A));
+                        }}
                         case 3 -> g.setColor(new Color(0xff0000));
                         case 5 -> g.setColor(new Color(0xff00ff));
                         case 8 -> g.setColor(new Color(0x6F7DA1));

@@ -18,6 +18,7 @@ public class Point {
     private Vector2d tail[];
     public boolean moved;
     private int destination;
+    private int stopTime;
     // END OF VEHICLE PARAMETERS
 
     // PEDESTRIANS PARAMETERS
@@ -47,6 +48,7 @@ public class Point {
         speed = 0;
         destination = tab[r.nextInt(tab.length)];
         color = r.nextInt(8);
+        stopTime = r.nextInt(100,200);
         if (length > 1) {
             tail  = new Vector2d[length-1];
             for(int i = 0; i < length-1; i++){
