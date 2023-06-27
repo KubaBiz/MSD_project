@@ -19,7 +19,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	private Boolean[][] blocked;
 	Generator generator1;
 	Generator generator4;
-	Generator generator5;
 	Generator generator10;
 	Generator generator11;
 	Generator generator14;
@@ -43,13 +42,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	private List<Vector2d> reduceMaxSpeedVectors = new ArrayList<>();
 	private List<Vector2d> IncreaseMaxSpeedPoints = new ArrayList<>();
 	private int time = 0;
-
-	//private int length;
-	//private int height;
-	//private Point[][] points;
 	private int size = 12;
-	Vector2d start;
-
 	public static Integer []types ={0,1,2,3,4,5,6,7,8,9};
 	public int editType = 0;
 	public int[] vehicleStatistics = {0, 0, 0, 0, 0};
@@ -74,13 +67,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				iter = points[x][y].getDestination() % 10;
 
 			}
-			else{
-				iter = 0;
-
-			}
+			else { iter = 0;}
 			newX = directions[x][y].get(iter).getX();
 			newY = directions[x][y].get(iter).getY();
-
 
 			if(!blocked[newX][newY]){
 				sum++;
@@ -93,7 +82,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		return sum;
 	}
 
-	public void moveOnStreet(List<Vector2d> streetName){
+	public void TrafficOnTheRoad(List<Vector2d> streetName){
 		for(int i = 0; i < streetName.size(); i ++){
 			Vector2d vector = streetName.get(i);
 			if(points[vector.getX()][vector.getY()].getLength() > 0 && !points[vector.getX()][vector.getY()].moved
@@ -104,7 +93,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 
-
 	public void addVehicle(Generator generator, int frequency){
 		if(time % frequency == 0){
 			Point vehicle = generator.generateVehicle();
@@ -112,6 +100,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 			blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
 		}
 	}
+
 	public void speedChanges(int x, int y){
 		int obstacle = carInFront(x,y,points[x][y].getMaxSpeed());
 		points[x][y].speedBoost();
@@ -299,28 +288,27 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		enteringTheCrossroads(new Vector2d(68, 18), new Vector2d(70, 19),
 				new Vector2d(71, 17), new Vector2d(69, 16), rightCrossroads);
 
+		TrafficOnTheRoad(street1);
+		TrafficOnTheRoad(street2);
+		TrafficOnTheRoad(street3);
+		TrafficOnTheRoad(street4);
+		TrafficOnTheRoad(street6);
+		TrafficOnTheRoad(street7);
+		TrafficOnTheRoad(street8);
+		TrafficOnTheRoad(street9);
+		TrafficOnTheRoad(street10);
+		TrafficOnTheRoad(street11);
+		TrafficOnTheRoad(street12);
+		TrafficOnTheRoad(street13);
+		TrafficOnTheRoad(street14);
+		TrafficOnTheRoad(leftCrossroads);
+		TrafficOnTheRoad(rightCrossroads);
 
-		moveOnStreet(street1);
-		moveOnStreet(street2);
-		moveOnStreet(street3);
-		moveOnStreet(street4);
-		moveOnStreet(street6);
-		moveOnStreet(street7);
-		moveOnStreet(street8);
-		moveOnStreet(street9);
-		moveOnStreet(street10);
-		moveOnStreet(street11);
-		moveOnStreet(street12);
-		moveOnStreet(street13);
-		moveOnStreet(street14);
-		moveOnStreet(leftCrossroads);
-		moveOnStreet(rightCrossroads);
-
-		addVehicle(generator1, 55);
-		addVehicle(generator10, 80);
-		addVehicle(generator4, 20);
-		addVehicle(generator14, 35);
-		addVehicle(generator11, 45);
+		addVehicle(generator1, 30);
+		addVehicle(generator10, 20);
+		addVehicle(generator4, 22);
+		addVehicle(generator14, 33);
+		addVehicle(generator11, 25);
 
 		clearVehicle(10, 35, true);
 		clearVehicle(69,35, true);
@@ -491,19 +479,19 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
 		//VEHICLES
 		String localization = System.getProperty("user.dir");
-		readFile(localization + "\\src\\main\\java\\org\\project\\street1.txt", street1);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street2.txt", street2);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street3.txt", street3);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street4.txt", street4);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street6.txt", street6);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street7.txt", street7);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street8.txt", street8);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street9.txt", street9);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street10.txt", street10);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street11.txt", street11);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street12.txt", street12);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street13.txt", street13);
-		readFile(localization + "\\src\\main\\java\\org\\project\\street14.txt", street14);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street1.txt", street1);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street2.txt", street2);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street3.txt", street3);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street4.txt", street4);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street6.txt", street6);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street7.txt", street7);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street8.txt", street8);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street9.txt", street9);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street10.txt", street10);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street11.txt", street11);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street12.txt", street12);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street13.txt", street13);
+		readFileAndAddDirections(localization + "\\src\\main\\java\\org\\project\\street14.txt", street14);
 		readFileWithoutDirections(localization + "\\src\\main\\java\\org\\project\\ReduceMaxSpeedPoints.txt",
 				reduceMaxSpeedVectors);
 		readFileWithoutDirections(localization + "\\src\\main\\java\\org\\project\\IncreaseMaxSpeedPoints.txt",
@@ -587,7 +575,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 	}
 
-	public void readFile(String fileName, List<Vector2d> list) {
+	public void readFileAndAddDirections(String fileName, List<Vector2d> list) {
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 			String line;
 			Vector2d prev = new Vector2d(-1,-1);
@@ -937,37 +925,6 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		}
 
 	}
-    // 34 x 76
-//	public void mouseClicked(MouseEvent e) {
-//		int x = e.getX() / size;
-//		int y = e.getY() / size;
-//		if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
-//			if(editType<4) {
-//				points[x][y].setLength(editType);
-//				this.repaint();
-//			}
-//			if(editType == 5 && points[x][y].getLength() != editType){
-//				String localization = System.getProperty("user.dir");
-//				String str1 = "\\src\\main\\java\\org\\project\\sidewalks.txt";
-//				String fileName = localization + str1;
-//				try {
-//					BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
-//
-//					writer.write(Integer.toString(x) + " " + Integer.toString(y));
-//					writer.newLine();
-//
-//					writer.close();
-//
-//					System.out.println("Numbers have been added to the file.");
-//				} catch (IOException exception) {
-//					System.out.println("An error occurred: " + exception.getMessage());
-//				}
-//				points[x][y].setLength(editType);
-//				this.repaint();
-//			}
-//		}
-//	}
-
 
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / size;

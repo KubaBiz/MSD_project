@@ -19,6 +19,7 @@ public class Point {
     public boolean moved;
     private int destination;
     int[] tab = {11,0,1};// 0 skręt w prawo, 1 prosto, 11 w lewo
+    private int stopTime;
     // END OF VEHICLE PARAMETERS
 
     // PEDESTRIANS PARAMETERS
@@ -49,6 +50,7 @@ public class Point {
         speed = 0;
         destination = tab[r.nextInt(tab.length)];
         color = r.nextInt(8);
+        stopTime = r.nextInt(100,200);
         if (length > 1) {
             tail  = new Vector2d[length-1];
             for(int i = 0; i < length-1; i++){
