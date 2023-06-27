@@ -304,11 +304,11 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 		TrafficOnTheRoad(leftCrossroads);
 		TrafficOnTheRoad(rightCrossroads);
 
-		addVehicle(generator1, 30);
-		addVehicle(generator10, 20);
-		addVehicle(generator4, 22);
-		addVehicle(generator14, 33);
-		addVehicle(generator11, 25);
+		addVehicle(generator1, 55);
+		addVehicle(generator10, 80);
+		addVehicle(generator4, 20);
+		addVehicle(generator14, 35);
+		addVehicle(generator11, 45);
 
 		clearVehicle(10, 35, true);
 		clearVehicle(69,35, true);
