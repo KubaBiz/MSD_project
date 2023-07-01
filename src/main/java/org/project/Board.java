@@ -96,8 +96,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 	public void addVehicle(Generator generator, int frequency){
 		if(time % frequency == 0){
 			Point vehicle = generator.generateVehicle();
-			points[generator.getPosition().getX()][generator.getPosition().getY()] = vehicle;
-			blocked[generator.getPosition().getX()][generator.getPosition().getY()] = true;
+			points[generator.getPosition().getX()]
+					[generator.getPosition().getY()] = vehicle;
+			blocked[generator.getPosition().getX()]
+					[generator.getPosition().getY()] = true;
 		}
 	}
 
@@ -169,17 +171,20 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 				points[current.getX()][current.getY()].setSpeed(0);
 
 				//jesli jest po prawej stronie ale sb nie kolidują to obaj jadą
-				if(points[current.getX()][current.getY()].getDestination() < points[right.getX()][right.getY()].getDestination()){
+				if(points[current.getX()][current.getY()].getDestination()
+						< points[right.getX()][right.getY()].getDestination()){
 					points[current.getX()][current.getY()].setSpeed(1);
 				}
-				else if(points[current.getX()][current.getY()].getDestination() == points[right.getX()][right.getY()].getDestination()
+				else if(points[current.getX()][current.getY()].getDestination()
+						== points[right.getX()][right.getY()].getDestination()
 						&& points[current.getX()][current.getY()].getDestination() == 0){
 					points[current.getX()][current.getY()].setSpeed(1);
 				}
 			}
-			//jesli nie ma po prawej stronie a auto skreca w lewo to patrzymy czy jedzie auto z
-			// naprzeciw (destination == 11 oznacza skret w lewo)
-			else if (points[current.getX()][current.getY()].getDestination()==11 && points[straight.getX()][straight.getY()].getLength() != 0)  {
+			//jesli nie ma po prawej stronie a auto skreca w lewo to patrzymy
+			// czy jedzie auto z naprzeciw (destination == 11 oznacza skret w lewo)
+			else if (points[current.getX()][current.getY()].getDestination()==11
+					&& points[straight.getX()][straight.getY()].getLength() != 0)  {
 				points[current.getX()][current.getY()].setSpeed(0);
 			}
 		}

@@ -131,7 +131,6 @@ public class Point {
         else {
             speed = (int) Math.max(1, Math.min(obstacleDistance - 1, Math.round(Math.sqrt(2 * obstacleDistance * deceleration))));
             speed = Math.min(speed,maxSpeed);
-
         }
     }
 
